@@ -2,7 +2,7 @@
 /**
  * Output the navigation footer and primary menu too a json file
  */
-require_once('../../../wp-load.php');
+require_once('../../../wp/wp-load.php');
 header('content-type application/json charset=utf-8');
 // For Footer
 $menu_name = 'footer_navigation';
