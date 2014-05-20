@@ -433,6 +433,7 @@ function add_export_link()
 /* Adds Subscribe2 support for custom post types */
 /**
  * @param $types
+ *
  * @return array
  */
 function my_post_types($types)
@@ -475,6 +476,7 @@ add_action('send_headers', 'add_edge_control_header');
 /**
  * @param $items
  * @param $args
+ *
  * @return string
  */
 function add_login_logout_link($items, $args)
@@ -501,6 +503,7 @@ add_action('admin_init', 'datagov_custom_js');
 
 /**
  * @param $text
+ *
  * @return mixed|void
  */
 function datagov_custom_keep_my_links($text)
@@ -533,7 +536,6 @@ function datagov_custom_keep_my_links($text)
 }
 
 include_once(dirname(dirname(__FILE__)) . '/suggested-datasets/suggested-datasets.php');
-
 
 add_filter('404_template', 'un_categorized_post_redirect');
 /**
@@ -576,7 +578,6 @@ function un_categorized_post_redirect($template)
     exit();
 }
 
-
 /**
  * remove featured content box
  */
@@ -586,7 +587,6 @@ function remove_featured_custom_taxonomy()
 }
 
 add_action('admin_menu', 'remove_featured_custom_taxonomy');
-
 
 /**
  * add featured content box with a new callback
@@ -765,7 +765,7 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
     // exclude 'Topic Introduction' term from the list
     foreach ($categories as $key => $term) {
         if ($term->name == "Topic Introduction") {
-            unset($categories[$key]);
+            unset($categories[ $key ]);
         }
     }
     if ($checked_ontop) {
@@ -774,9 +774,9 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
         $keys               = array_keys($categories);
 
         foreach ($keys as $k) {
-            if (in_array($categories[$k]->term_id, $args['selected_cats'])) {
-                $checked_categories[] = $categories[$k];
-                unset($categories[$k]);
+            if (in_array($categories[ $k ]->term_id, $args['selected_cats'])) {
+                $checked_categories[] = $categories[ $k ];
+                unset($categories[ $k ]);
             }
         }
 
@@ -786,7 +786,6 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
     // Then the rest of them
     echo call_user_func_array(array(&$walker, 'walk'), array($categories, 0, $args));
 }
-
 
 /**
  * Retrieve a list of the most popular terms from the specified taxonomy.
@@ -799,9 +798,9 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
  * @since 2.5.0
  *
  * @param string $taxonomy Taxonomy to retrieve terms from.
- * @param int $default Unused.
- * @param int $number Number of terms to retrieve. Defaults to 10.
- * @param bool $echo Optionally output the list as well. Defaults to true.
+ * @param int    $default  Unused.
+ * @param int    $number   Number of terms to retrieve. Defaults to 10.
+ * @param bool   $echo     Optionally output the list as well. Defaults to true.
  *
  * @return array List of popular term IDs.
  */
@@ -928,7 +927,6 @@ function filter_rss_voting()
 add_filter('https_local_ssl_verify', '__return_false');
 add_filter('https_ssl_verify', '__return_false');
 
-
 /**
  * DG-1955
  * Daily update CKAN dataset total count, to display it over search box on main page
@@ -990,10 +988,17 @@ add_filter(
     'clean_url',
     /**
      * @param $url
+     *
      * @return string
      */
     /**
      * @param $url
+     *
+     * @return string
+     */
+    /**
+     * @param $url
+     *
      * @return string
      */
     function ($url) {
@@ -1036,16 +1041,35 @@ function get_ckan_harvest_statistics()
     $ckan->updateDB();
 }
 
+/**
+ * DG-1931
+ * github #339
+ * Sub Topics - default url doesn't prefix parent topic name
+ */
+add_action('init', 'add_category_to_page_url', -1);
+add_filter('page_link', 'page_url_add_category_filter', 10, 3);
+add_filter('page_rewrite_rules', 'page_by_category_rewrite_rules');
 
+/**
+ * Adding %category% tag to Page permalink structure
+ */
 function add_category_to_page_url()
 {
     global $wp_rewrite;
     if (!strpos($wp_rewrite->get_page_permastruct(), '%category%')) {
         $wp_rewrite->page_structure = '%category%/' . $wp_rewrite->page_structure;
     }
-    $wp_rewrite->flush_rules();
 }
 
+/**
+ * Adding %category_name%/%sub_category_name% to Page permalink
+ *
+ * @param $permalink
+ * @param $post_id
+ * @param $sample
+ *
+ * @return mixed|string
+ */
 function page_url_add_category_filter($permalink, $post_id, $sample)
 {
     if (strpos($permalink, '%category%') !== false) {
@@ -1053,32 +1077,19 @@ function page_url_add_category_filter($permalink, $post_id, $sample)
         if ($cats) {
             usort($cats, '_usort_terms_by_ID'); // order by ID
 
-            /**
-             * Filter the category that gets used in the %category% permalink token.
-             *
-             * @since 3.5.0
-             *
-             * @param stdClass $cat The category to use in the permalink.
-             * @param array $cats Array of all categories associated with the post.
-             * @param WP_Post $post The post in question.
-             */
-//            $category_object = apply_filters( 'post_link_category', $cats[0], $cats, $post );
-
             $category_object = get_term($cats[0], 'category');
-            $category        = $category_object->slug;
+            $category        = $category_object->slug . '/';
             if ($parent = $category_object->parent) {
-                $category = get_category_parents($parent, false, '/', true) . $category;
+                $category = get_category_parents($parent, false, '/', true) . $category . '/';
             }
         }
         // show default category in permalinks, without
         // having to assign it explicitly
         if (empty($category)) {
             $category = '';
-//            $default_category = get_term( get_option( 'default_category' ), 'category' );
-//            $category = is_wp_error( $default_category ) ? '' : $default_category->slug;
         }
 
-        $permalink = str_replace('%category%', $category, $permalink);
+        $permalink = str_replace('%category%/', str_replace('//', '/', $category), $permalink);
         $permalink = user_trailingslashit($permalink, 'single');
     }
 
@@ -1086,9 +1097,27 @@ function page_url_add_category_filter($permalink, $post_id, $sample)
 }
 
 /**
- * DG-1931
- * github #339
- * Sub Topics - default url doesn't prefix parent topic name
+ * Adding routing for
+ *      %category_name%/%pagename%
+ * and
+ *      %category_name%/%sub_category_name%/%pagename%
+ *
+ * @param $rewrite_rules
+ *
+ * @return array
  */
-//add_action('init', 'add_category_to_page_url', -1);
-//add_filter('page_link', 'page_url_add_category_filter', 10, 3);
+function page_by_category_rewrite_rules($rewrite_rules)
+{
+    // The most generic page rewrite rule is at end of the array
+    // We place our rule one before that
+    end($rewrite_rules);
+    $last_pattern     = key($rewrite_rules);
+    $last_replacement = array_pop($rewrite_rules);
+    $rewrite_rules += array(
+        '[^/]+/[^/]+/([^/]+)/?$' => 'index.php?pagename=$matches[1]',
+        '[^/]+/([^/]+)/?$'       => 'index.php?pagename=$matches[1]',
+        $last_pattern            => $last_replacement,
+    );
+
+    return $rewrite_rules;
+}
