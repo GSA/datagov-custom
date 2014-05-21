@@ -1116,6 +1116,7 @@ function page_by_category_rewrite_rules($rewrite_rules)
     $rewrite_rules += array(
         '[^/]+/[^/]+/([^/]+)/?$' => 'index.php?pagename=$matches[1]',
         '[^/]+/([^/]+)/?$'       => 'index.php?pagename=$matches[1]',
+        '([^/]+)/?$'             => 'index.php?pagename=$matches[1]',
         $last_pattern            => $last_replacement,
     );
 
