@@ -1122,3 +1122,46 @@ function page_by_category_rewrite_rules($rewrite_rules)
 
     return $rewrite_rules;
 }
+
+add_action('admin_menu', 'iworld_map_configurations');
+function iworld_map_configurations(){
+    add_menu_page("iWorld List View/CSV Configuration", "iWorld List View Configuration", "administrator", "iworld_file_path", "iword_file_path_config");
+}
+
+function iword_file_path_config(){
+    $international_open_data = (get_option('international_open_data') != '') ? get_option('international_open_data') : '';
+    $us_states_open_data = (get_option('us_states_open_data') != '') ? get_option('us_states_open_data') : '';
+    $us_counties_open_data = (get_option('us_counties_open_data') != '') ? get_option('us_counties_open_data') : '';
+?>
+<form action="options.php" method="post" name="options">
+    <h2>iWorld List View File Settings</h2> <?php wp_nonce_field('update-options'); ?>
+    <div>
+        <div class="form-item form-type-textfield form-item-server-info">
+            <label for="international-list">International Open Data </label>
+            <input type="text" class="form-text required" maxlength="128" size="60"
+                   value="<?php echo $international_open_data; ?>" name="international_open_data" id="international_open_data">
+
+            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/international.csv</div>
+        </div>
+        <div class="form-item form-type-textfield form-item-server-info">
+            <label for="us-states-list">US States Open Data</label>
+            <input type="text" class="form-text required" maxlength="128" size="60"
+                   value="<?php echo $us_states_open_data; ?>" name="us_states_open_data" id="us_states_open_data">
+
+            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/states.csv</div>
+        </div>
+        <div class="form-item form-type-textfield form-item-server-info">
+            <label for="us-states-list">US Cities and Counties Open Data</label>
+            <input type="text" class="form-text required" maxlength="128" size="60"
+                   value="<?php echo $us_counties_open_data; ?>" name="us_counties_open_data" id="us_counties_open_data">
+
+            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/counties.csv</div>
+        </div>
+    </div>
+    <input type="hidden" name="action" value="update"/>
+    <input type="hidden" name="page_options"
+           value="international_open_data,us_states_open_data,us_counties_open_data"/>
+    <input type="submit" name="Submit" value="Update"/>
+</form>
+<?php
+}
