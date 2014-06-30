@@ -19,7 +19,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
         /**
          *
          */
-        const CKAN_HARVESTS_API_URL = 'https://catalog.data.gov/api/3/action/package_search?q=type:harvest&rows=1000';
+        const CKAN_HARVESTS_API_URL = 'http://catalog.data.gov/api/3/action/package_search?q=type:harvest&rows=1000';
 
         /**
          *
