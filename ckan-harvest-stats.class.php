@@ -43,32 +43,35 @@ if (!class_exists('CKAN_Harvest_Stats')) {
 
         /**
          * Get ids of federal agencies only
-         * @return array|bool
+         *
+         * @return array
+         * @throws Exception
          */
         private function getFedJsonAgencies()
         {
             $return_agencies = array();
 
-            try {
-                $fed_json = file_get_contents(self::FED_JSON_URL);
-                if (false === $fed_json) {
-                    throw new Exception('could not access page');
-                }
-//                decode result as array
-                $json_result = json_decode($fed_json, true);
-                if (!isset($json_result['taxonomies'])) {
-                    throw new Exception('taxonomies not found');
-                }
-                $results = $json_result['taxonomies'];
+            $fed_json = wp_remote_get(self::FED_JSON_URL, array('timeout'=>60*5));
+            if( is_wp_error( $fed_json ) ) {
+                throw new Exception($fed_json->get_error_message());
+            }
 
-                foreach ($results as $taxonomy) {
-                    if (!isset($taxonomy['taxonomy'])) {
-                        continue;
-                    }
-                    $return_agencies[] = $taxonomy['taxonomy']['unique id'];
+            $fed_json = $fed_json['body'];
+            if (false === $fed_json) {
+                throw new Exception('could not access page: '.self::FED_JSON_URL);
+            }
+//                decode result as array
+            $json_result = json_decode($fed_json, true);
+            if (!isset($json_result['taxonomies'])) {
+                throw new Exception('taxonomies not found');
+            }
+            $results = $json_result['taxonomies'];
+
+            foreach ($results as $taxonomy) {
+                if (!isset($taxonomy['taxonomy'])) {
+                    continue;
                 }
-            } catch (Exception $ex) {
-                return false;
+                $return_agencies[] = $taxonomy['taxonomy']['unique id'];
             }
 
             return $return_agencies;
@@ -79,43 +82,43 @@ if (!class_exists('CKAN_Harvest_Stats')) {
          */
         public function updateDB()
         {
-            try {
-                $json = file_get_contents(self::CKAN_HARVESTS_API_URL);
-                if (false === $json) {
-                    throw new Exception('could not access page');
-                }
+            $json = wp_remote_get(self::CKAN_HARVESTS_API_URL, array('timeout'=>60*5));
+            if( is_wp_error( $json ) ) {
+                throw new Exception($json->get_error_message());
+            }
+            $json = $json['body'];
+
+            if (false === $json) {
+                throw new Exception('could not access page: '.self::CKAN_HARVESTS_API_URL);
+            }
 //                decode result as array
-                $json_result = json_decode($json, true);
-                if (true != $json_result['success']) {
-                    throw new Exception('json returned [success]=false');
-                }
-                $results = $json_result['result']['results'];
+            $json_result = json_decode($json, true);
+            if (true != $json_result['success']) {
+                throw new Exception('json returned [success]=false');
+            }
+            $results = $json_result['result']['results'];
 
-                $organizations = $this->getOrganizationsAsArray();
-                $fed_agencies  = $this->getFedJsonAgencies();
+            $organizations = $this->getOrganizationsAsArray();
+            $fed_agencies  = $this->getFedJsonAgencies();
 
-                foreach ($results as $harvest_result) {
+            foreach ($results as $harvest_result) {
 
-                    $organization = $harvest_result['organization'];
+                $organization = $harvest_result['organization'];
 
-                    if (!in_array($organization['name'], $fed_agencies)) {
-                        continue;
-                    }
-
-                    if (!isset($organizations[$organization['name']])) {
-                        $organizations[$organization['name']] = $organization['title'];
-                        if (!$this->saveOrganization($organization)) {
-                            throw new Exception(
-                                'Could not add organization ' . $organization['name'] . ' to ' . self::CKAN_HARVEST_ORGANIZATIONS_TABLE
-                            );
-                        }
-                    }
-
-                    $this->saveHarvestResult($harvest_result);
+                if (!in_array($organization['name'], $fed_agencies)) {
+                    continue;
                 }
 
-            } catch (Exception $ex) {
-                return false;
+                if (!isset($organizations[$organization['name']])) {
+                    $organizations[$organization['name']] = $organization['title'];
+                    if (!$this->saveOrganization($organization)) {
+                        throw new Exception(
+                            'Could not add organization ' . $organization['name'] . ' to ' . self::CKAN_HARVEST_ORGANIZATIONS_TABLE
+                        );
+                    }
+                }
+
+                $this->saveHarvestResult($harvest_result);
             }
 
             return true;
