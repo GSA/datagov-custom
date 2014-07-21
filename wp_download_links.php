@@ -4,72 +4,41 @@
  */
 require_once('../../../wp/wp-load.php');
 header('content-type application/json charset=utf-8');
-// For Footer
-$menu_name = 'footer_navigation';
+$menus = get_registered_nav_menus();
 $json      = ' jsonCallback({';
-if (($locations = get_nav_menu_locations()) && isset($locations[$menu_name])) {
-    $menu       = wp_get_nav_menu_object($locations[$menu_name]);
-    $menu_items = wp_get_nav_menu_items($menu->term_id);
-    $json .= '"Footer":[';
-    $count            = 0;
-    $count_menu_items = count($menu_items);
-    foreach ((array)$menu_items as $key => $menu_item) {
-        if ($menu_item->menu_item_parent == 0) {
-            $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
+foreach ( $menus as $location => $description ) {
+    if (($locations = get_nav_menu_locations()) && isset($locations[$location])) {
+        $menu       = wp_get_nav_menu_object($locations[$location]);
+        $menu_items = wp_get_nav_menu_items($menu->term_id);
+        $json .= '"'.$description.'":[';
+        $count            = 0;
+        $count_menu_items = count($menu_items);
+        foreach ((array)$menu_items as $key => $menu_item) {
+            if ($menu_item->menu_item_parent == 0) {
+                $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
                     $menu_item->title
                 ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
                     $menu_item->url
                 ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '"' . '}';
-        } else {
-            $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
+            } else {
+                $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
                     $menu_item->title
                 ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
                     $menu_item->url
                 ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '"' . '}';
-        }
-        if ($count != $count_menu_items - 1) {
-            $json .= ",";
-        }
+            }
+            if ($count != $count_menu_items - 1) {
+                $json .= ",";
+            }
 
-        $count++;
+            $count++;
+        }
+        $json .= '],';
     }
-    $json .= ']';
 }
 
-
-// primary links
-$menu_name = 'primary_navigation';
-if (($locations = get_nav_menu_locations()) && isset($locations[$menu_name])) {
-    $menu       = wp_get_nav_menu_object($locations[$menu_name]);
-    $menu_items = wp_get_nav_menu_items($menu->term_id);
-    $json .= ', "Primary":[';
-    $count            = 0;
-    $count_menu_items = count($menu_items);
-    foreach ((array)$menu_items as $key => $menu_item) {
-        if ($menu_item->menu_item_parent == 0) {
-            $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
-                    $menu_item->title
-                ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
-                    $menu_item->url
-                ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '"' . '}';
-        } else {
-            $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
-                    $menu_item->title
-                ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
-                    $menu_item->url
-                ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '"' . '}';
-        }
-        if ($count != $count_menu_items - 1) {
-            $json .= ",";
-        }
-
-        $count++;
-    }
-    $json .= ']';
-}
 $json .= '});';
 print(prettyPrint($json));
-
 
 /**
  * @param $json
