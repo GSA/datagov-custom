@@ -6,8 +6,6 @@ require_once('../../../wp/wp-load.php');
 header('content-type application/json charset=utf-8');
 $menus = get_registered_nav_menus();
 $json      = ' jsonCallback({';
-$count_menus = count($menus);
-$i=0;
 foreach ( $menus as $location => $description ) {
     if (($locations = get_nav_menu_locations()) && isset($locations[$location])) {
         $menu       = wp_get_nav_menu_object($locations[$location]);
@@ -35,12 +33,11 @@ foreach ( $menus as $location => $description ) {
 
             $count++;
         }
-        $i++;
-        $json .= ($i != $count_menus) ? '],' : ']';
+        $json .= '],';
 
     }
 }
-
+$json.= rtrim($json,',');
 $json .= '});';
 print(prettyPrint($json));
 
