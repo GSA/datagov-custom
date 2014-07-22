@@ -1165,3 +1165,17 @@ function iword_file_path_config(){
 </form>
 <?php
 }
+
+add_action('init','register_all_nav_menus');
+function register_all_nav_menus(){
+    $menus = get_terms( 'nav_menu', array( 'hide_empty' => true ) );
+    $menu_names = array();
+    foreach($menus as $menu){
+        $menu_names[] = $menu->name;
+    }
+    $menu_names = array_values(array_diff($menu_names, array("Primary Navigation", "Social Links","Topics Navigation","Footer")));
+
+    foreach($menu_names as $menu_name=>$value){
+        register_nav_menus(array(strtolower($value)."_navigation"=>__($value,'roots') ));
+    }
+}
