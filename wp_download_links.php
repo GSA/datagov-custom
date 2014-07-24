@@ -37,7 +37,7 @@ foreach ( $menus as $location => $description ) {
 
     }
 }
-$json.= rtrim($json,',');
+$json = rtrim($json,',');
 $json .= '});';
 print(prettyPrint($json));
 
