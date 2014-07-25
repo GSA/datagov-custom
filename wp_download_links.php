@@ -5,27 +5,27 @@
 require_once('../../../wp/wp-load.php');
 header('content-type application/json charset=utf-8');
 $menus = get_registered_nav_menus();
-$json      = ' jsonCallback({';
-foreach ( $menus as $location => $description ) {
+$json  = ' jsonCallback({';
+foreach ($menus as $location => $description) {
     if (($locations = get_nav_menu_locations()) && isset($locations[$location])) {
         $menu       = wp_get_nav_menu_object($locations[$location]);
         $menu_items = wp_get_nav_menu_items($menu->term_id);
-        $json .= '"'.$location.'":[';
+        $json .= '"' . $location . '":[';
         $count            = 0;
         $count_menu_items = count($menu_items);
         foreach ((array)$menu_items as $key => $menu_item) {
             if ($menu_item->menu_item_parent == 0) {
                 $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
-                    $menu_item->title
-                ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
-                    $menu_item->url
-                ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '"' . '}';
+                        $menu_item->title
+                    ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
+                        fixUrl($menu_item->url)
+                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '"' . '}';
             } else {
                 $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
-                    $menu_item->title
-                ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
-                    $menu_item->url
-                ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '"' . '}';
+                        $menu_item->title
+                    ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
+                        fixUrl($menu_item->url)
+                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '"' . '}';
             }
             if ($count != $count_menu_items - 1) {
                 $json .= ",";
@@ -37,12 +37,22 @@ foreach ( $menus as $location => $description ) {
 
     }
 }
-$json = rtrim($json,',');
+$json = rtrim($json, ',');
 $json .= '});';
 print(prettyPrint($json));
 
+function fixUrl($url)
+{
+    if (false === strpos($url, '//')) {
+        $url = home_url($url);
+    }
+
+    return $url;
+}
+
 /**
  * @param $json
+ *
  * @return string
  */
 function prettyPrint($json)
