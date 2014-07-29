@@ -46,7 +46,7 @@ function fixUrl($url)
     if (false === strpos($url, '//')) {
         $url = home_url($url);
     }
-
+    $url =  str_replace(array('http://','https://'), '//', $url);
     return $url;
 }
 
