@@ -765,7 +765,7 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
     // exclude 'Topic Introduction' term from the list
     foreach ($categories as $key => $term) {
         if ($term->name == "Topic Introduction") {
-            unset($categories[ $key ]);
+            unset($categories[$key]);
         }
     }
     if ($checked_ontop) {
@@ -774,9 +774,9 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
         $keys               = array_keys($categories);
 
         foreach ($keys as $k) {
-            if (in_array($categories[ $k ]->term_id, $args['selected_cats'])) {
-                $checked_categories[] = $categories[ $k ];
-                unset($categories[ $k ]);
+            if (in_array($categories[$k]->term_id, $args['selected_cats'])) {
+                $checked_categories[] = $categories[$k];
+                unset($categories[$k]);
             }
         }
 
@@ -875,9 +875,13 @@ function environment_conf_settings()
 function ckan_environment_conf()
 {
     $protocol            = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    $ckan_default_server = $protocol . (get_option('ckan_default_server') != '') ? get_option(
+    $ckan_default_server = (get_option('ckan_default_server') != '') ? get_option(
         'ckan_default_server'
     ) : 'catalog.data.gov/dataset';
+    $ckan_default_server = strstr(
+        $ckan_default_server,
+        '://'
+    ) ? $ckan_default_server : ($protocol . $ckan_default_server);
     ?>
     <form action="options.php" method="post" name="options">
         <h2>Catalog Environment Configuration</h2> <?php wp_nonce_field('update-options'); ?>
@@ -1124,58 +1128,79 @@ function page_by_category_rewrite_rules($rewrite_rules)
 }
 
 add_action('admin_menu', 'iworld_map_configurations');
-function iworld_map_configurations(){
-    add_menu_page("iWorld List View/CSV Configuration", "iWorld List View Configuration", "administrator", "iworld_file_path", "iword_file_path_config");
+function iworld_map_configurations()
+{
+    add_menu_page(
+        "iWorld List View/CSV Configuration",
+        "iWorld List View Configuration",
+        "administrator",
+        "iworld_file_path",
+        "iword_file_path_config"
+    );
 }
 
-function iword_file_path_config(){
-    $international_open_data = (get_option('international_open_data') != '') ? get_option('international_open_data') : '';
-    $us_states_open_data = (get_option('us_states_open_data') != '') ? get_option('us_states_open_data') : '';
-    $us_counties_open_data = (get_option('us_counties_open_data') != '') ? get_option('us_counties_open_data') : '';
-?>
-<form action="options.php" method="post" name="options">
-    <h2>iWorld List View File Settings</h2> <?php wp_nonce_field('update-options'); ?>
-    <div>
-        <div class="form-item form-type-textfield form-item-server-info">
-            <label for="international-list">International Open Data </label>
-            <input type="text" class="form-text required" maxlength="128" size="60"
-                   value="<?php echo $international_open_data; ?>" name="international_open_data" id="international_open_data">
+function iword_file_path_config()
+{
+    $international_open_data = (get_option('international_open_data') != '') ? get_option(
+        'international_open_data'
+    ) : '';
+    $us_states_open_data     = (get_option('us_states_open_data') != '') ? get_option('us_states_open_data') : '';
+    $us_counties_open_data   = (get_option('us_counties_open_data') != '') ? get_option('us_counties_open_data') : '';
+    ?>
+    <form action="options.php" method="post" name="options">
+        <h2>iWorld List View File Settings</h2> <?php wp_nonce_field('update-options'); ?>
+        <div>
+            <div class="form-item form-type-textfield form-item-server-info">
+                <label for="international-list">International Open Data </label>
+                <input type="text" class="form-text required" maxlength="128" size="60"
+                       value="<?php echo $international_open_data; ?>" name="international_open_data"
+                       id="international_open_data">
 
-            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/international.csv</div>
-        </div>
-        <div class="form-item form-type-textfield form-item-server-info">
-            <label for="us-states-list">US States Open Data</label>
-            <input type="text" class="form-text required" maxlength="128" size="60"
-                   value="<?php echo $us_states_open_data; ?>" name="us_states_open_data" id="us_states_open_data">
+                <div class="description">Please enter the path info. Example:
+                    http://www.data.gov/media/2013/11/international.csv
+                </div>
+            </div>
+            <div class="form-item form-type-textfield form-item-server-info">
+                <label for="us-states-list">US States Open Data</label>
+                <input type="text" class="form-text required" maxlength="128" size="60"
+                       value="<?php echo $us_states_open_data; ?>" name="us_states_open_data" id="us_states_open_data">
 
-            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/states.csv</div>
-        </div>
-        <div class="form-item form-type-textfield form-item-server-info">
-            <label for="us-states-list">US Cities and Counties Open Data</label>
-            <input type="text" class="form-text required" maxlength="128" size="60"
-                   value="<?php echo $us_counties_open_data; ?>" name="us_counties_open_data" id="us_counties_open_data">
+                <div class="description">Please enter the path info. Example:
+                    http://www.data.gov/media/2013/11/states.csv
+                </div>
+            </div>
+            <div class="form-item form-type-textfield form-item-server-info">
+                <label for="us-states-list">US Cities and Counties Open Data</label>
+                <input type="text" class="form-text required" maxlength="128" size="60"
+                       value="<?php echo $us_counties_open_data; ?>" name="us_counties_open_data"
+                       id="us_counties_open_data">
 
-            <div class="description">Please enter the path info. Example: http://www.data.gov/media/2013/11/counties.csv</div>
+                <div class="description">Please enter the path info. Example:
+                    http://www.data.gov/media/2013/11/counties.csv
+                </div>
+            </div>
         </div>
-    </div>
-    <input type="hidden" name="action" value="update"/>
-    <input type="hidden" name="page_options"
-           value="international_open_data,us_states_open_data,us_counties_open_data"/>
-    <input type="submit" name="Submit" value="Update"/>
-</form>
+        <input type="hidden" name="action" value="update"/>
+        <input type="hidden" name="page_options"
+               value="international_open_data,us_states_open_data,us_counties_open_data"/>
+        <input type="submit" name="Submit" value="Update"/>
+    </form>
 <?php
 }
 
-add_action('init','register_all_nav_menus');
-function register_all_nav_menus(){
-    $menus = get_terms( 'nav_menu', array( 'hide_empty' => true ) );
+add_action('init', 'register_all_nav_menus');
+function register_all_nav_menus()
+{
+    $menus      = get_terms('nav_menu', array('hide_empty' => true));
     $menu_names = array();
-    foreach($menus as $menu){
+    foreach ($menus as $menu) {
         $menu_names[] = $menu->name;
     }
-    $menu_names = array_values(array_diff($menu_names, array("Primary Navigation", "Social Links","Topics Navigation","Footer")));
+    $menu_names = array_values(
+        array_diff($menu_names, array("Primary Navigation", "Social Links", "Topics Navigation", "Footer"))
+    );
 
-    foreach($menu_names as $menu_name=>$value){
-        register_nav_menus(array(strtolower($value)."_navigation"=>__($value,'roots') ));
+    foreach ($menu_names as $menu_name => $value) {
+        register_nav_menus(array(strtolower($value) . "_navigation" => __($value, 'roots')));
     }
 }
