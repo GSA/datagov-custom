@@ -10,6 +10,24 @@ Version: 1.0
 
 //Custom Post Types
 
+add_action('init', 'menu_cleanup_no_groups');
+
+function menu_cleanup_no_groups()
+{
+    if (current_user_can( 'manage_options' )) {
+        if (isset($_GET['menu_cleanup_no_groups'])) {
+            /**
+             * @var wpdb $wpdb
+             */
+            global $wpdb;
+            $query = "UPDATE " . $wpdb->postmeta . "
+            SET meta_value=replace(meta_value, '_groups_limit=0', '') WHERE meta_key='_menu_item_url'
+    ";
+            $wpdb->query($query);
+        }
+    }
+}
+
 #Challenges
 add_action('admin_menu', 'add_export_link');
 add_action('init', 'cptui_register_my_cpt_challenge');
