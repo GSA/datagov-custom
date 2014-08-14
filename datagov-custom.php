@@ -1222,3 +1222,17 @@ function register_all_nav_menus()
         register_nav_menus(array(strtolower($value) . "_navigation" => __($value, 'roots')));
     }
 }
+
+add_action('create_category', 'new_function_create_highlight_page');
+function new_function_create_highlight_page($categ_id){
+    $catname = get_cat_name( $categ_id );
+    $post = array(
+        'post_category'  => array($categ_id),
+        'post_name'      => 'highlights',
+        'post_title'     => $catname.' Hightlights',
+        'post_status'    => 'publish',
+        'post_type'      => 'page',
+        'page_template'   => 'template-categories-highlights.php'
+    );
+    wp_insert_post($post);
+}
