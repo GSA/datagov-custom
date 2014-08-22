@@ -1228,11 +1228,16 @@ function new_function_create_highlight_page($categ_id){
     $catname = get_cat_name( $categ_id );
     $post = array(
         'post_category'  => array($categ_id),
-        'post_name'      => 'highlights',
         'post_title'     => $catname.' Hightlights',
         'post_status'    => 'publish',
         'post_type'      => 'page',
         'page_template'   => 'template-categories-highlights.php'
     );
-    wp_insert_post($post);
+    $new_post_id = wp_insert_post($post);
+    $edit_post= array(
+        'ID'           => $new_post_id,
+        'post_name' => 'Highlights '
+    );
+    wp_update_post($edit_post);
+
 }
