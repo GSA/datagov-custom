@@ -1241,3 +1241,12 @@ function new_function_create_highlight_page($categ_id){
     wp_update_post($edit_post);
 
 }
+
+/**
+ * Disable update notifications on production
+ */
+if ( defined('ENVIRONMENT') && ('production' == ENVIRONMENT) ) {
+    add_action( 'init', create_function( '$a', "remove_action( 'init', 'wp_version_check' );" ), 2 );
+    add_filter( 'pre_option_update_core', create_function( '$a', "return null;" ) );
+    add_filter( 'wp_get_update_data', create_function( '$a', "return null;" ) );
+}
