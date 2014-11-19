@@ -1250,3 +1250,45 @@ if ( defined('ENVIRONMENT') && ('production' == ENVIRONMENT) ) {
     add_filter( 'pre_option_update_core', create_function( '$a', "return null;" ) );
     add_filter( 'wp_get_update_data', create_function( '$a', "return null;" ) );
 }
+
+/**
+ * Temporary fix for w3-total-cache Akamai purge
+ */
+
+function datagov_custom_purge_akamai_cache($post_id) {
+
+    // don't do anything if this is a revision
+    if (wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    $post_permalink      = get_permalink($post_id);
+    $post_permalink      = str_replace("datagov", "staging.data.gov", $post_permalink); 
+    $objects             = array($post_permalink);
+    $username            = "kvuppala@reisystems.com";
+    $password            = "Temp01234^";
+    $akamai_endpoint      = "https://api.ccu.akamai.com/ccu/v2/queues/default";
+    $content_type_header = "Content-Type:application/json"; 
+
+    $request_body   = array(
+        "type"    => "arl",
+	"action"  => "invalidate",
+	"domain"  => "production",
+	"objects" => $objects,
+    );  
+   
+    $request_body = json_encode($request_body);
+
+    // send a curl post to akamai end point + fetch response
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $akamai_endpoint);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array($content_type_header));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
+    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password"); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+    curl_exec($ch);
+    curl_close($ch);
+
+}
+add_action('save_post', 'datagov_custom_purge_akamai_cache');
