@@ -1267,7 +1267,7 @@ function datagov_custom_purge_akamai_cache($post_id) {
     }
 
     $post_permalink      = get_permalink($post_id);
-    $post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink); 
+    #$post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink); 
     $objects             = array($post_permalink);
     $username            = get_option('akamai_username');
     $password            = get_option('akamai_password');
