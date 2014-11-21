@@ -8,6 +8,8 @@ Version: 1.0
 // Define current version constant
 # define( 'DCPT_VERSION', '0.8.1' );
 
+$purge_status = "";
+
 //Custom Post Types
 
 add_action('init', 'menu_cleanup_no_groups');
@@ -1253,6 +1255,8 @@ if ( defined('ENVIRONMENT') && ('production' == ENVIRONMENT) ) {
 
 /**
  * Temporary fix for w3-total-cache Akamai purge
+ * todo: write php-akamai library that would handle all features of akamai ccu API
+ * including all possible httpStatus codes
  */
 
 function datagov_custom_purge_akamai_cache($post_id) {
@@ -1263,17 +1267,17 @@ function datagov_custom_purge_akamai_cache($post_id) {
     }
 
     $post_permalink      = get_permalink($post_id);
-    $post_permalink      = str_replace("datagov", "staging.data.gov", $post_permalink); 
+    $post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink); 
     $objects             = array($post_permalink);
-    $username            = "kvuppala@reisystems.com";
-    $password            = "Temp01234^";
-    $akamai_endpoint      = "https://api.ccu.akamai.com/ccu/v2/queues/default";
+    $username            = get_option('akamai_username');
+    $password            = get_option('akamai_password');
+    $akamai_endpoint     = 'https://api.ccu.akamai.com/ccu/v2/queues/default';
     $content_type_header = "Content-Type:application/json"; 
 
-    $request_body   = array(
-        "type"    => "arl",
-	"action"  => "invalidate",
-	"domain"  => "production",
+    $request_body = array(
+        "type"    => 'arl',
+	"action"  => 'invalidate',
+	"domain"  => 'production',
 	"objects" => $objects,
     );  
    
@@ -1287,8 +1291,45 @@ function datagov_custom_purge_akamai_cache($post_id) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
     curl_setopt($ch, CURLOPT_USERPWD, "$username:$password"); 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
-    curl_exec($ch);
-    curl_close($ch);
 
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $response = json_decode($response);
+
+    $purge_status  = "Please purge the akamai URL of this post manually, "; 
+    $purge_status .= "or wait for the daily Akamai cache purge. ";
+
+    if (isset($response->httpStatus)) {
+        if ($response->httpStatus == '201') {
+	    $estimatedSeconds = $response->estimatedSeconds;
+            $purge_status     = "Edits that have been made to this post will be reflected on the ";
+	    $purge_status    .= "public facing website in approximately $estimatedSeconds seconds. "; 
+        }
+    }
+
+    $_SESSION['purge_status'] = $purge_status;
 }
-add_action('save_post', 'datagov_custom_purge_akamai_cache');
+
+/**
+ * Append akamai purge status to post/page messages
+ */
+function akamai_purge_message($messages) {
+    $purge_status        = $_SESSION['purge_status'];
+    $messages['page'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['page'][1]);
+    $messages['post'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['post'][1]);
+
+    unset($_SESSION['purge_status']);
+
+    return $messages;
+}
+
+// add akamai cdn purge options
+add_option('akamai_username', '', '', 'yes');
+add_option('akamai_password', '', '', 'yes');
+add_option('akamai_enable_purge', 0, '', 'yes');
+
+// Purge cached posts on every post/page edit + modify post_update $messages variables
+if (get_option('akamai_enable_purge') == 1) {
+    add_action('save_post', 'datagov_custom_purge_akamai_cache');
+    add_filter('post_updated_messages', 'akamai_purge_message');
+}
