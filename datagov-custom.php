@@ -1333,16 +1333,3 @@ if (get_option('akamai_enable_purge') == 1) {
     add_action('save_post', 'datagov_custom_purge_akamai_cache');
     add_filter('post_updated_messages', 'akamai_purge_message');
 }
-
-add_filter('pre_get_posts', 'query_post_type');
-function query_post_type($query) {
-    if(is_category() || is_tag()) {
-        $post_type = get_query_var('post_type');
-        if($post_type)
-            $post_type = $post_type;
-        else
-            $post_type = array('page','post');
-        $query->set('post_type',$post_type);
-        return $query;
-    }
-}
