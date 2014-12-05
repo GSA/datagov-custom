@@ -1316,7 +1316,7 @@ function datagov_custom_purge_akamai_cache($post_id) {
 function akamai_purge_message($messages) {
     $purge_status        = $_SESSION['purge_status'];
     $messages['page'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['page'][1]);
-    $messages['post'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['post'][1]);
+    $messages['post'][1] = str_replace('Post updated.', 'Post updated. ' . $purge_status, $messages['post'][1]);
 
     unset($_SESSION['purge_status']);
 
