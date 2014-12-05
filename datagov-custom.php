@@ -1333,3 +1333,76 @@ if (get_option('akamai_enable_purge') == 1) {
     add_action('save_post', 'datagov_custom_purge_akamai_cache');
     add_filter('post_updated_messages', 'akamai_purge_message');
 }
+
+add_filter('request', 'feed_request');
+function feed_request($qv){
+    $rss_post_types = array('post', 'page');
+    if(isset($qv['feed']) && isset($qv['post_type']))
+        $qv['post_type'] = $rss_post_types;
+    return $qv;
+}
+
+add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
+function exclude_status_from_feeds( &$wp_query ) {
+    if ( $wp_query->is_feed() ) {
+        $post_formats_to_exclude = array(
+        'post-format-status'
+    );
+    $extra_tax_query = array(
+        'taxonomy' => 'post_format',
+        'field' => 'slug',
+        'terms' => $post_formats_to_exclude,
+        'operator' => 'NOT IN'
+    );
+
+    $tax_query = $wp_query->get( 'tax_query' );
+    if ( is_array( $tax_query ) ) {
+        $tax_query = $tax_query + $extra_tax_query;
+    } else {
+        $tax_query = array( $extra_tax_query );
+    }
+    $wp_query->set( 'tax_query', $tax_query );
+    }
+}
+
+add_filter( 'rss2_head', 'rss_custom_head' );
+function rss_custom_head(){
+    $args = array(
+        'post_type' => array('post', 'page'),
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'post_format',
+                'field' => 'slug',
+                'terms' => array('post-format-status'),
+                'operator' => 'NOT IN'
+            ),
+
+        ),
+    );
+    $res = new WP_Query( $args );
+    $count_posts =  $res->found_posts;
+    echo  "<total>$count_posts</total>\n";
+    echo "<pagination>\n";
+    $postsperpage = 10;
+    $total_pages = ceil($count_posts/$postsperpage);
+    $currentpage = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+    if ($currentpage > $total_pages)
+        $currentpage = $total_pages;
+    if ($currentpage < 1)
+        $currentpage = 1;
+    if ($currentpage > 1) {
+        $prevpage = $currentpage - 1;
+        echo '<link href="'.get_bloginfo('url').'/feed" rel="first"></link>'."\n";
+        echo '<link href="'.get_bloginfo('url').'/feed?paged='.$prevpage.'" rel="previous"></link>'."\n";
+
+    }
+    if ($currentpage != $total_pages) {
+        $nextpage = $currentpage + 1;
+        echo '<link href="'.get_bloginfo('url').'/feed?paged='.$nextpage.'" rel="next"></link>'."\n";
+        echo '<link href="'.get_bloginfo('url').'/feed?paged='.$total_pages.'" rel="last"></link>'."\n";
+    }
+    echo "</pagination>\n";
+
+}
+
+
