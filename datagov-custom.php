@@ -1403,3 +1403,10 @@ function rss_custom_head(){
     }
 
 }
+
+remove_all_actions( 'do_feed_atom' );
+add_action( 'do_feed_atom', 'load_custom_atom_feed');
+function load_custom_atom_feed() {
+    $template = get_template_directory() . '/template-feed-atom.php';
+    load_template( $template );
+}
