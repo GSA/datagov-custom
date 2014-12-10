@@ -1366,7 +1366,6 @@ function exclude_status_from_feeds( &$wp_query ) {
     }
 }
 
-add_filter( 'rss2_head', 'rss_custom_head' );
 add_filter( 'atom_head', 'rss_custom_head' );
 function rss_custom_head(){
     $args = array(
