@@ -1409,3 +1409,11 @@ function load_custom_atom_feed() {
     $template = get_template_directory() . '/template-feed-atom.php';
     load_template( $template );
 }
+
+remove_all_actions( 'do_feed_rss2' );
+add_action( 'do_feed_rss2', 'load_custom_rss2_feed');
+function load_custom_rss2_feed() {
+    $template = get_template_directory() . '/template-feed-rss2.php';
+    load_template( $template );
+}
+
