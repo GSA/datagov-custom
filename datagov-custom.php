@@ -1346,6 +1346,7 @@ function feed_request($qv){
 add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
 function exclude_status_from_feeds( &$wp_query ) {
     if ( $wp_query->is_feed() ) {
+        $wp_query->set('orderby', 'modified');
         $post_formats_to_exclude = array(
             'post-format-status'
         );
