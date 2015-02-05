@@ -1070,81 +1070,105 @@ function get_ckan_harvest_statistics()
  * github #339
  * Sub Topics - default url doesn't prefix parent topic name
  */
-add_action('init', 'add_category_to_page_url', -1);
-add_filter('page_link', 'page_url_add_category_filter', 10, 3);
-add_filter('page_rewrite_rules', 'page_by_category_rewrite_rules');
+
+add_action('save_post', 'datagov_custom_add_category', 20);
 
 /**
- * Adding %category% tag to Page permalink structure
+ * This hook function that adds custom_permalink metadata to pages 
+ * in the following format: (%category%/%post_name%). This only works
+ * for pages for which you don't explicitly set a permalink value.
+ * In short, it auto populates the permalink field if left empty.
+ * 
+ * @param int post_id
+ *   The id of the page
+ * 
  */
-function add_category_to_page_url()
-{
-    global $wp_rewrite;
-    if (!strpos($wp_rewrite->get_page_permastruct(), '%category%')) {
-        $wp_rewrite->page_structure = '%category%/' . $wp_rewrite->page_structure;
+
+function datagov_custom_add_category($post_id) {
+
+    // If it is our form has not been submitted, so we dont want to do anything
+    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+      return;
+    }
+
+    // ignore wp_insert_post action that is called when the page
+    // is in revision mode
+    if(wp_is_post_revision($post_id)) {
+      return;
+    }
+     
+    // ignore wp_insert_post action that is called after 
+    // user clicks Add New Page
+    if (empty($_POST)) {
+      return;
+    }
+
+    $custom_permalink = get_post_meta( $post_id, 'custom_permalink', true );
+    $permalink        = get_permalink($post_id);
+    $is_new_page      = datagov_custom_is_new_page($_POST['_wp_http_referer']);
+
+    if (empty($_POST['custom_permalink']) && empty($custom_permalink) && $is_new_page) {
+        $post_terms       = $_POST['post_category'];
+         
+        if (!empty($post_terms)) { 
+
+	    // add category(s) slug only to new pages
+            $post_term_id = end($post_terms);
+	    $term_exists  = term_exists((int) $post_term_id, "category");
+	    $is_term      = ($term_exists !==0) && ($term_exists !== NULL);
+
+	    if ($is_term) {
+                $post_term = get_term((int) $post_term_id, "category");
+                $term_hirarchy = datagov_custom_term_hirarchy($post_term);
+
+	    }
+        }
+
+        $term_hirarchy    = implode("/", array_reverse($term_hirarchy));
+        $custom_permalink = str_replace(home_url(), $term_hirarchy, $permalink);
+
+        add_post_meta($post_id, 'custom_permalink', $custom_permalink);
+    }
+}
+
+
+/**
+ * This function checks if a new pages is being added
+ * based on referer
+ * 
+ * @param string referer
+ *
+ * @return bool 
+ *   true if its a new page otherwise false
+ */
+
+function datagov_custom_is_new_page($referer) {
+    if (strpos($referer, 'post-new.php?post_type=page') === false) {
+        return false;
+    } else {
+        return true;
     }
 }
 
 /**
- * Adding %category_name%/%sub_category_name% to Page permalink
+ * This function figures out the custom_permalink taxonomy chunk.
+ * In short, it will generate an array of parent slug (including the child slug) 
+ * given a child term id
+ * 
+ * @param object $child_term
  *
- * @param $permalink
- * @param $post_id
- * @param $sample
- *
- * @return mixed|string
+ * @return array $term_hirarchy
  */
-function page_url_add_category_filter($permalink, $post_id, $sample)
-{
-    if (strpos($permalink, '%category%') !== false) {
-        $cats = get_the_category($post_id);
-        if ($cats) {
-            usort($cats, '_usort_terms_by_ID'); // order by ID
 
-            $category_object = get_term($cats[0], 'category');
-            $category        = $category_object->slug . '/';
-            if ($parent = $category_object->parent) {
-                $category = get_category_parents($parent, false, '/', true) . $category . '/';
-            }
-        }
-        // show default category in permalinks, without
-        // having to assign it explicitly
-        if (empty($category)) {
-            $category = '';
-        }
+function datagov_custom_term_hirarchy($child_term) {
+    $parent_term = $child_term;
 
-        $permalink = str_replace('%category%/', str_replace('//', '/', $category), $permalink);
-        $permalink = user_trailingslashit($permalink, 'single');
+    while ($parent_term->term_id != 0) {
+        $term_hirarchy[] = $parent_term->slug;
+        $parent_term = get_term((int) $parent_term->parent, 'category');
     }
 
-    return $permalink;
-}
-
-/**
- * Adding routing for
- *      %category_name%/%pagename%
- * and
- *      %category_name%/%sub_category_name%/%pagename%
- *
- * @param $rewrite_rules
- *
- * @return array
- */
-function page_by_category_rewrite_rules($rewrite_rules)
-{
-    // The most generic page rewrite rule is at end of the array
-    // We place our rule one before that
-    end($rewrite_rules);
-    $last_pattern     = key($rewrite_rules);
-    $last_replacement = array_pop($rewrite_rules);
-    $rewrite_rules += array(
-        '[^/]+/[^/]+/([^/]+)/?$' => 'index.php?pagename=$matches[1]',
-        '[^/]+/([^/]+)/?$'       => 'index.php?pagename=$matches[1]',
-        '([^/]+)/?$'             => 'index.php?pagename=$matches[1]',
-        $last_pattern            => $last_replacement,
-    );
-
-    return $rewrite_rules;
+    return $term_hirarchy;
 }
 
 add_action('admin_menu', 'iworld_map_configurations');
@@ -1330,8 +1354,8 @@ add_option('akamai_enable_purge', 0, '', 'yes');
 
 // Purge cached posts on every post/page edit + modify post_update $messages variables
 if (get_option('akamai_enable_purge') == 1) {
-    add_action('save_post', 'datagov_custom_purge_akamai_cache');
-    add_filter('post_updated_messages', 'akamai_purge_message');
+    add_action('save_post', 'datagov_custom_purge_akamai_cache', 100);
+    add_filter('post_updated_messages', 'akamai_purge_message', 100);
 }
 
 
@@ -1346,7 +1370,6 @@ function feed_request($qv){
 add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
 function exclude_status_from_feeds( &$wp_query ) {
     if ( $wp_query->is_feed() ) {
-        $wp_query->set('orderby', 'modified');
         $post_formats_to_exclude = array(
             'post-format-status'
         );
