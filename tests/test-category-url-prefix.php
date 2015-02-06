@@ -17,11 +17,11 @@ class CategoryUrlPrefixTest extends WP_UnitTestCase {
     function test_custom_term_hirarchy() {
 
         // Climate
-        $child_term = wp_insert_term('Climate', 'category', array('slug' => 'climate'));
+        $parent_term = wp_insert_term('Climate', 'category', array('slug' => 'climate'));
 
         // Coastal Flooding
-        $args          = array('slug' => 'coastalflooding', 'parent_id' => $child_term['term_id']);
-        $parent_term   = wp_insert_term('Coastal Flooding', 'category', $args);
+        $args          = array('slug' => 'coastalflooding', 'parent' => $parent_term['term_id']);
+        $child_term   = wp_insert_term('Coastal Flooding', 'category', $args);
         $child_term    = get_term($child_term['term_id'], 'category');
         $term_hirarchy = array(0 => 'coastalflooding', 1 => 'climate');
     
