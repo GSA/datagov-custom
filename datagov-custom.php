@@ -1088,19 +1088,19 @@ function datagov_custom_add_category($post_id) {
 
     // If our form has not been submitted, we dont want to do anything
     if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-      return;
+        return;
     }
 
     // ignore wp_insert_post action that is called when the page
     // is in revision mode
     if(wp_is_post_revision($post_id)) {
-      return;
+        return;
     }
      
     // ignore wp_insert_post action that is called after 
     // user clicks Add New Page
     if (empty($_POST)) {
-      return;
+        return;
     }
 
     $custom_permalink = get_post_meta($post_id, 'custom_permalink', true);
