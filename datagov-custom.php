@@ -1086,7 +1086,7 @@ add_action('save_post', 'datagov_custom_add_category', 20);
 
 function datagov_custom_add_category($post_id) {
 
-    // If it is our form has not been submitted, so we dont want to do anything
+    // If our form has not been submitted, we dont want to do anything
     if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
       return;
     }
@@ -1103,12 +1103,12 @@ function datagov_custom_add_category($post_id) {
       return;
     }
 
-    $custom_permalink = get_post_meta( $post_id, 'custom_permalink', true );
+    $custom_permalink = get_post_meta($post_id, 'custom_permalink', true);
     $permalink        = get_permalink($post_id);
     $is_new_page      = datagov_custom_is_new_page($_POST['_wp_http_referer']);
 
     if (empty($_POST['custom_permalink']) && empty($custom_permalink) && $is_new_page) {
-        $post_terms       = $_POST['post_category'];
+        $post_terms = $_POST['post_category'];
          
         if (!empty($post_terms)) { 
 
@@ -1118,7 +1118,7 @@ function datagov_custom_add_category($post_id) {
 	    $is_term      = ($term_exists !==0) && ($term_exists !== NULL);
 
 	    if ($is_term) {
-                $post_term = get_term((int) $post_term_id, "category");
+                $post_term     = get_term((int) $post_term_id, "category");
                 $term_hirarchy = datagov_custom_term_hirarchy($post_term);
 
 	    }
@@ -1165,7 +1165,7 @@ function datagov_custom_term_hirarchy($child_term) {
 
     while ($parent_term->term_id != 0) {
         $term_hirarchy[] = $parent_term->slug;
-        $parent_term = get_term((int) $parent_term->parent, 'category');
+        $parent_term     = get_term((int) $parent_term->parent, 'category');
     }
 
     return $term_hirarchy;
