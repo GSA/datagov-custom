@@ -23,7 +23,7 @@ class CategoryUrlPrefixTest extends WP_UnitTestCase {
         $args = array('slug' => 'coastalflooding', 'parent_id' => $term['term_id']);
         $term = wp_insert_term('Coastal Flooding', 'category', $args);
 
-        $child_term    = 'coastalflooding';
+        $child_term    = get_term('coastalflooding', 'category');
         $term_hirarchy = array(0 => 'coastalflooding', 1 => 'climate');
     
         $this->assertEquals($term_hirarchy, datagov_custom_term_hirarchy($child_term));
