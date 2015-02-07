@@ -1390,43 +1390,6 @@ function exclude_status_from_feeds( &$wp_query ) {
     }
 }
 
-add_filter( 'atom_head', 'rss_custom_head' );
-function rss_custom_head(){
-    $args = array(
-        'post_type' => array('post', 'page'),
-        'tax_query' => array(
-            array(
-                'taxonomy' => 'post_format',
-                'field' => 'slug',
-                'terms' => array('post-format-status'),
-                'operator' => 'NOT IN'
-            ),
-
-        ),
-    );
-    $res = new WP_Query( $args );
-    $count_posts =  $res->found_posts;
-    echo '<link rel="first" href="'.get_bloginfo('url').'/feed/atom/" ></link>'."\n";
-    $postsperpage = get_option('posts_per_rss');
-    $total_pages = ceil($count_posts/$postsperpage);
-    $currentpage = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-    if ($currentpage > $total_pages)
-        $currentpage = $total_pages;
-    if ($currentpage < 1)
-        $currentpage = 1;
-    if ($currentpage > 1) {
-        $prevpage = $currentpage - 1;
-        echo '<link rel="previous" href="'.get_bloginfo('url').'/feed/atom?paged='.$prevpage.'" ></link>'."\n";
-
-    }
-    if ($currentpage != $total_pages) {
-        $nextpage = $currentpage + 1;
-        echo '<link rel ="next" href="'.get_bloginfo('url').'/feed/atom?paged='.$nextpage.'" ></link>'."\n";
-        echo '<link rel ="last" href="'.get_bloginfo('url').'/feed/atom?paged='.$total_pages.'" ></link>'."\n";
-    }
-
-}
-
 remove_all_actions( 'do_feed_atom' );
 add_action( 'do_feed_atom', 'load_custom_atom_feed');
 function load_custom_atom_feed() {
