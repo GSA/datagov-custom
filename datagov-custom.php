@@ -1096,7 +1096,6 @@ function datagov_custom_add_category($post_id) {
     if(wp_is_post_revision($post_id)) {
         return;
     }
-     
     // ignore wp_insert_post action that is called after 
     // user clicks Add New Page
     if (empty($_POST)) {
@@ -1109,7 +1108,7 @@ function datagov_custom_add_category($post_id) {
 
     if (empty($_POST['custom_permalink']) && empty($custom_permalink) && $is_new_page) {
         $post_terms = $_POST['post_category'];
-         
+
         if (!empty($post_terms)) { 
 
 	    // add category(s) slug only to new pages
@@ -1143,6 +1142,9 @@ function datagov_custom_add_category($post_id) {
  */
 
 function datagov_custom_is_new_page($referer) {
+
+    $referer = sanitize_text_field($referer);
+
     if (strpos($referer, 'post-new.php?post_type=page') === false) {
         return false;
     } else {
@@ -1163,11 +1165,11 @@ function datagov_custom_is_new_page($referer) {
 function datagov_custom_term_hirarchy($child_term) {
     $parent_term = $child_term;
 
-    while ($parent_term->term_id != 0) {
+    while (!is_wp_error($parent_term)) {
         $term_hirarchy[] = $parent_term->slug;
         $parent_term     = get_term((int) $parent_term->parent, 'category');
     }
-
+   
     return $term_hirarchy;
 }
 
