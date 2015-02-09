@@ -1363,24 +1363,36 @@ if (get_option('akamai_enable_purge') == 1) {
 
 add_filter('request', 'feed_request');
 function feed_request($qv){
+    $post_type = $_GET['post_type'];
     $rss_post_types = array('post', 'page');
-    if(isset($qv['feed']) && isset($qv['post_type']))
-        $qv['post_type'] = $rss_post_types;
+    if(isset($qv['feed']) && isset($qv['post_type'])){
+        if(empty($post_type))
+            $qv['post_type'] = $rss_post_types;
+        else
+            $qv['post_type'] = array($post_type);
+    }
     return $qv;
 }
 
 add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
 function exclude_status_from_feeds( &$wp_query ) {
     if ( $wp_query->is_feed() ) {
-        $post_formats_to_exclude = array(
-            'post-format-status'
-        );
-        $extra_tax_query = array(
-            'taxonomy' => 'post_format',
-            'field' => 'slug',
-            'terms' => $post_formats_to_exclude,
-            'operator' => 'NOT IN'
-        );
+        $format = $_GET['format'];
+        $wp_query->set('orderby', 'modified');
+        $post_format_array = array('');
+        if(!empty($format)){
+            if($format=="standard"){
+                $post_formats_to_exclude = array('post-format-status','post-format-link','post-format-image','post-format-gallery');
+                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
+            }
+            else {
+                $post_formats_to_include = array('post-format-'.$format);
+                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_include );
+            }
+        } else {
+            $post_formats_to_exclude = array('post-format-status');
+            $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
+        }
 
         $tax_query = $wp_query->get( 'tax_query' );
         if ( is_array( $tax_query ) ) {
@@ -1392,42 +1404,6 @@ function exclude_status_from_feeds( &$wp_query ) {
     }
 }
 
-add_filter( 'atom_head', 'rss_custom_head' );
-function rss_custom_head(){
-    $args = array(
-        'post_type' => array('post', 'page'),
-        'tax_query' => array(
-            array(
-                'taxonomy' => 'post_format',
-                'field' => 'slug',
-                'terms' => array('post-format-status'),
-                'operator' => 'NOT IN'
-            ),
-
-        ),
-    );
-    $res = new WP_Query( $args );
-    $count_posts =  $res->found_posts;
-    echo '<link rel="first" href="'.get_bloginfo('url').'/feed/atom/" ></link>'."\n";
-    $postsperpage = get_option('posts_per_rss');
-    $total_pages = ceil($count_posts/$postsperpage);
-    $currentpage = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-    if ($currentpage > $total_pages)
-        $currentpage = $total_pages;
-    if ($currentpage < 1)
-        $currentpage = 1;
-    if ($currentpage > 1) {
-        $prevpage = $currentpage - 1;
-        echo '<link rel="previous" href="'.get_bloginfo('url').'/feed/atom?paged='.$prevpage.'" ></link>'."\n";
-
-    }
-    if ($currentpage != $total_pages) {
-        $nextpage = $currentpage + 1;
-        echo '<link rel ="next" href="'.get_bloginfo('url').'/feed/atom?paged='.$nextpage.'" ></link>'."\n";
-        echo '<link rel ="last" href="'.get_bloginfo('url').'/feed/atom?paged='.$total_pages.'" ></link>'."\n";
-    }
-
-}
 
 remove_all_actions( 'do_feed_atom' );
 add_action( 'do_feed_atom', 'load_custom_atom_feed');
