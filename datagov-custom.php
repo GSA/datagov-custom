@@ -1378,16 +1378,19 @@ function exclude_status_from_feeds( &$wp_query ) {
         $format = $_GET['format'];
         $wp_query->set('orderby', 'modified');
         $post_format_array = array('');
-        if($format=="standard")
-            $post_formats_to_exclude = array('post-format-status','post-format-link','post-format-image','post-format-gallery');
-        else
+        if(!empty($format)){
+            if($format=="standard"){
+                $post_formats_to_exclude = array('post-format-status','post-format-link','post-format-image','post-format-gallery');
+                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
+            }
+            else {
+                $post_formats_to_include = array('post-format-'.$format);
+                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_include );
+            }
+        } else {
             $post_formats_to_exclude = array('post-format-status');
-        $extra_tax_query = array(
-            'taxonomy' => 'post_format',
-            'field' => 'slug',
-            'terms' => $post_formats_to_exclude,
-            'operator' => 'NOT IN'
-        );
+            $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
+        }
 
         $tax_query = $wp_query->get( 'tax_query' );
         if ( is_array( $tax_query ) ) {
