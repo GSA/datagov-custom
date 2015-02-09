@@ -1361,18 +1361,27 @@ if (get_option('akamai_enable_purge') == 1) {
 
 add_filter('request', 'feed_request');
 function feed_request($qv){
+    $post_type = $_GET['post_type'];
     $rss_post_types = array('post', 'page');
-    if(isset($qv['feed']) && isset($qv['post_type']))
-        $qv['post_type'] = $rss_post_types;
+    if(isset($qv['feed']) && isset($qv['post_type'])){
+        if(empty($post_type))
+            $qv['post_type'] = $rss_post_types;
+        else
+            $qv['post_type'] = array($post_type);
+    }
     return $qv;
 }
 
 add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
 function exclude_status_from_feeds( &$wp_query ) {
     if ( $wp_query->is_feed() ) {
-        $post_formats_to_exclude = array(
-            'post-format-status'
-        );
+        $format = $_GET['format'];
+        $wp_query->set('orderby', 'modified');
+        $post_format_array = array('');
+        if($format=="standard")
+            $post_formats_to_exclude = array('post-format-status','post-format-link','post-format-image','post-format-gallery');
+        else
+            $post_formats_to_exclude = array('post-format-status');
         $extra_tax_query = array(
             'taxonomy' => 'post_format',
             'field' => 'slug',
@@ -1389,6 +1398,7 @@ function exclude_status_from_feeds( &$wp_query ) {
         $wp_query->set( 'tax_query', $tax_query );
     }
 }
+
 
 remove_all_actions( 'do_feed_atom' );
 add_action( 'do_feed_atom', 'load_custom_atom_feed');
