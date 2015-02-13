@@ -45,7 +45,7 @@ class CategoryUrlPrefixTest extends WP_UnitTestCase {
 
     }
 
-    public function test_datagov_custom_add_category() {
+    public function test_add_page_with_category_terms() {
 
         $page_args = array(
  	    'post_content'   => 'Test post tagged with category and subcategory',
@@ -78,4 +78,30 @@ class CategoryUrlPrefixTest extends WP_UnitTestCase {
 
     }
 
+    public function test_add_page_with_no_category_terms() {
+
+        $page_args = array(
+ 	    'post_content'   => 'Test post tagged with category and subcategory',
+	    'post_name'      => 'test-no-cat',
+	    'post_title'     => 'Testnocat',
+	    'post_status'    => 'publish',
+	    'post_type'      => 'page',
+            'post_author'    => 1,
+        );  
+
+        // need to fake $_POST request
+        $_POST['_wp_http_referer'] = '/wp/wp-admin/post-new.php?post_type=page';
+        $_POST['post_category']    = array();
+
+        $post_id = $this->factory->post->create($page_args);
+        $this->assertTrue(!is_wp_error($post_id));
+
+        if (!is_wp_error($post_id)) {
+            $custom_permalink_meta = get_post_meta($post_id, 'custom_permalink', true);
+            $this->assertTrue(empty($custom_permalink_meta));
+        }
+
+    }
+
 }
+

@@ -1117,16 +1117,15 @@ function datagov_custom_add_category($post_id) {
 	    $is_term      = ($term_exists !==0) && ($term_exists !== NULL);
 
 	    if ($is_term) {
-                $post_term     = get_term((int) $post_term_id, "category");
-                $term_hirarchy = datagov_custom_term_hirarchy($post_term);
+                $post_term        = get_term((int) $post_term_id, "category");
+                $term_hirarchy    = datagov_custom_term_hirarchy($post_term);
+                $term_hirarchy    = implode("/", array_reverse($term_hirarchy));
+                $custom_permalink = str_replace(home_url(), $term_hirarchy, $permalink);
 
+                add_post_meta($post_id, 'custom_permalink', $custom_permalink);
 	    }
         }
 
-        $term_hirarchy    = implode("/", array_reverse($term_hirarchy));
-        $custom_permalink = str_replace(home_url(), $term_hirarchy, $permalink);
-
-        add_post_meta($post_id, 'custom_permalink', $custom_permalink);
     }
 }
 
