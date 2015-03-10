@@ -1418,3 +1418,13 @@ function load_custom_rss2_feed() {
     load_template( $template );
 }
 
+/** 
+ * Add id tag to Federated-Analytics handle defined in wp_eunque function in roots theme
+ */
+add_filter('script_loader_tag', function ($tag, $handle) {
+
+    if ('Federated-Analytics' !== $handle)
+        return $tag;
+
+    return str_replace( ' src', ' id="_fed_an_ua_tag" src', $tag );
+}, 10, 2 );
