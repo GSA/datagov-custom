@@ -19,13 +19,13 @@ foreach ($menus as $location => $description) {
                         $menu_item->title
                     ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
                         fixUrl($menu_item->url)
-                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '"' . '}';
+                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"Parent":' . '"Yes"' . '}';
             } else {
                 $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
                         $menu_item->title
                     ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
                         fixUrl($menu_item->url)
-                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '"' . '}';
+                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '",' . '"Parent":' . '"No"' . '}';
             }
             if ($count != $count_menu_items - 1) {
                 $json .= ",";
