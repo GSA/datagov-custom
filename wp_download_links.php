@@ -13,20 +13,39 @@ foreach ($menus as $location => $description) {
         $json .= '"' . $location . '":[';
         $count            = 0;
         $count_menu_items = count($menu_items);
-        foreach ((array)$menu_items as $key => $menu_item) {
-            if ($menu_item->menu_item_parent == 0) {
-                $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
-                        $menu_item->title
-                    ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
-                        fixUrl($menu_item->url)
-                    ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"Parent":' . '"Yes"' . '}';
-            } else {
-                $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
+      foreach ((array)$menu_items as $key => $menu_item) {
+        $check_id = $menu_item->db_id;
+        $parent = "No";
+     
+      	foreach ((array)$menu_items as $value => $menu_sub) {
+        
+        	if ($check_id == $menu_sub->menu_item_parent){
+        				$parent = "Yes";
+						break;
+        	}
+
+       	 }
+
+
+    if ($menu_item->menu_item_parent > 0) {
+
+           $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
                         $menu_item->title
                     ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
                         fixUrl($menu_item->url)
                     ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id . '",' . '"' . 'parent_id' . '":' . '"' . $menu_item->menu_item_parent . '",' . '"Parent":' . '"No"' . '}';
+
+
+                }else {
+                                        $json .= '{' . '"' . 'name' . '":' . '"' . esc_attr(
+                             $menu_item->title
+                                ) . '",' . '"' . 'link' . '":' . '"' . esc_attr(
+                                fixUrl($menu_item->url)
+                        ) . '",' . '"' . 'id' . '":' . '"' . $menu_item->db_id .'",'. '"Parent":' . '"' . $parent.'"'. '}';
+
             }
+        
+        
             if ($count != $count_menu_items - 1) {
                 $json .= ",";
             }
