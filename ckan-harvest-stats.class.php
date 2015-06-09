@@ -24,7 +24,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
         /**
          *
          */
-        const FED_JSON_URL = 'https://idm.data.gov/fed_agency.json';
+        const FED_JSON_URL = '/app/themes/roots-nextdatagov/assets/Json/fed_agency.json';
 
         /**
          *
