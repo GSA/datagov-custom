@@ -14,7 +14,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
     /**
      * Class CKAN_Harvest_Stats
      */
-     global $url = get_site_url();
+    $url = get_site_url();
     class CKAN_Harvest_Stats
     {
         /**
