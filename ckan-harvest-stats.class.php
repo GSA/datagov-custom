@@ -26,7 +26,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
          *
          */
         
-        const FED_JSON_URL = '/app/themes/roots-nextdatagov/assets/Json/fed_agency.json';
+        const DEFAULT_FED_JSON_URL = 'http://data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json';
 
         /**
          *
@@ -52,15 +52,15 @@ if (!class_exists('CKAN_Harvest_Stats')) {
         private function getFedJsonAgencies()
         {
             $return_agencies = array();
-	    $site_url = wp_option('siteurl');
-            $fed_json = wp_remote_get($siteurl . self::FED_JSON_URL, array('timeout'=>60*5));
+            $json_url = get_option('org_server') ? get_option('org_server') : self::DEFAULT_FED_JSON_URL;
+            $fed_json = wp_remote_get($json_url, array('timeout'=>60*5));
             if( is_wp_error( $fed_json ) ) {
                 throw new Exception($fed_json->get_error_message());
             }
 
             $fed_json = $fed_json['body'];
             if (false === $fed_json) {
-                throw new Exception('could not access page: '.self::FED_JSON_URL);
+                throw new Exception('could not access page: '.$json_url);
             }
 //                decode result as array
             $json_result = json_decode($fed_json, true);
