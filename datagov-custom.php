@@ -16,7 +16,7 @@ add_action('init', 'menu_cleanup_no_groups');
 
 function menu_cleanup_no_groups()
 {
-    if (current_user_can( 'manage_options' )) {
+    if (current_user_can('manage_options')) {
         if (isset($_GET['menu_cleanup_no_groups'])) {
             /**
              * @var wpdb $wpdb
@@ -41,33 +41,33 @@ function cptui_register_my_cpt_challenge()
     register_post_type(
         'challenge',
         array(
-            'label'           => 'Challenges',
-            'description'     => '',
-            'public'          => true,
-            'show_ui'         => true,
-            'show_in_menu'    => true,
+            'label' => 'Challenges',
+            'description' => '',
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'capability_type' => 'post',
-            'map_meta_cap'    => true,
-            'hierarchical'    => false,
-            'rewrite'         => array('slug' => 'challenge', 'with_front' => true),
-            'query_var'       => true,
-            'supports'        => array('title', 'editor', 'comments', 'author'),
-            'taxonomies'      => array('category'),
-            'labels'          => array(
-                'name'               => 'Challenges',
-                'singular_name'      => 'Challenge',
-                'menu_name'          => 'Challenges',
-                'add_new'            => 'Add Challenge',
-                'add_new_item'       => 'Add New Challenge',
-                'edit'               => 'Edit',
-                'edit_item'          => 'Edit Challenge',
-                'new_item'           => 'New Challenge',
-                'view'               => 'View Challenge',
-                'view_item'          => 'View Challenge',
-                'search_items'       => 'Search Challenges',
-                'not_found'          => 'No Challenges Found',
+            'map_meta_cap' => true,
+            'hierarchical' => false,
+            'rewrite' => array('slug' => 'challenge', 'with_front' => true),
+            'query_var' => true,
+            'supports' => array('title', 'editor', 'comments', 'author'),
+            'taxonomies' => array('category'),
+            'labels' => array(
+                'name' => 'Challenges',
+                'singular_name' => 'Challenge',
+                'menu_name' => 'Challenges',
+                'add_new' => 'Add Challenge',
+                'add_new_item' => 'Add New Challenge',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Challenge',
+                'new_item' => 'New Challenge',
+                'view' => 'View Challenge',
+                'view_item' => 'View Challenge',
+                'search_items' => 'Search Challenges',
+                'not_found' => 'No Challenges Found',
                 'not_found_in_trash' => 'No Challenges Found in Trash',
-                'parent'             => 'Parent Challenge',
+                'parent' => 'Parent Challenge',
             )
         )
     );
@@ -83,33 +83,33 @@ function cptui_register_my_cpt_applications()
     register_post_type(
         'applications',
         array(
-            'label'           => 'Applications',
-            'description'     => 'Add a developer application related to Data.gov or specific community.',
-            'public'          => true,
-            'show_ui'         => true,
-            'show_in_menu'    => true,
+            'label' => 'Applications',
+            'description' => 'Add a developer application related to Data.gov or specific community.',
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'capability_type' => 'post',
-            'map_meta_cap'    => true,
-            'hierarchical'    => false,
-            'rewrite'         => array('slug' => 'applications', 'with_front' => true),
-            'query_var'       => true,
-            'supports'        => array('title', 'editor', 'comments', 'revisions', 'author'),
-            'taxonomies'      => array('category', 'application categories', 'application types'),
-            'labels'          => array(
-                'name'               => 'Applications',
-                'singular_name'      => 'Application',
-                'menu_name'          => 'Applications',
-                'add_new'            => 'Add Application',
-                'add_new_item'       => 'Add New Application',
-                'edit'               => 'Edit',
-                'edit_item'          => 'Edit Application',
-                'new_item'           => 'New Application',
-                'view'               => 'View Application',
-                'view_item'          => 'View Application',
-                'search_items'       => 'Search Applications',
-                'not_found'          => 'No Applications Found',
+            'map_meta_cap' => true,
+            'hierarchical' => false,
+            'rewrite' => array('slug' => 'applications', 'with_front' => true),
+            'query_var' => true,
+            'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
+            'taxonomies' => array('category', 'application categories', 'application types'),
+            'labels' => array(
+                'name' => 'Applications',
+                'singular_name' => 'Application',
+                'menu_name' => 'Applications',
+                'add_new' => 'Add Application',
+                'add_new_item' => 'Add New Application',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Application',
+                'new_item' => 'New Application',
+                'view' => 'View Application',
+                'view_item' => 'View Application',
+                'search_items' => 'Search Applications',
+                'not_found' => 'No Applications Found',
                 'not_found_in_trash' => 'No Applications Found in Trash',
-                'parent'             => 'Parent Application',
+                'parent' => 'Parent Application',
             )
         )
     );
@@ -125,17 +125,17 @@ function cptui_register_my_cpt_events()
     register_post_type(
         'events',
         array(
-            'label'           => 'Events',
-            'description'     => '',
-            'public'          => true,
-            'show_ui'         => true,
-            'show_in_menu'    => true,
+            'label' => 'Events',
+            'description' => '',
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'capability_type' => 'post',
-            'map_meta_cap'    => true,
-            'hierarchical'    => false,
-            'rewrite'         => array('slug' => 'events', 'with_front' => true),
-            'query_var'       => true,
-            'supports'        => array(
+            'map_meta_cap' => true,
+            'hierarchical' => false,
+            'rewrite' => array('slug' => 'events', 'with_front' => true),
+            'query_var' => true,
+            'supports' => array(
                 'title',
                 'editor',
                 'excerpt',
@@ -148,22 +148,22 @@ function cptui_register_my_cpt_events()
                 'page-attributes',
                 'post-formats'
             ),
-            'taxonomies'      => array('category'),
-            'labels'          => array(
-                'name'               => 'Events',
-                'singular_name'      => 'Event',
-                'menu_name'          => 'Events',
-                'add_new'            => 'Add Event',
-                'add_new_item'       => 'Add New Event',
-                'edit'               => 'Edit',
-                'edit_item'          => 'Edit Event',
-                'new_item'           => 'New Event',
-                'view'               => 'View Event',
-                'view_item'          => 'View Event',
-                'search_items'       => 'Search Events',
-                'not_found'          => 'No Events Found',
+            'taxonomies' => array('category'),
+            'labels' => array(
+                'name' => 'Events',
+                'singular_name' => 'Event',
+                'menu_name' => 'Events',
+                'add_new' => 'Add Event',
+                'add_new_item' => 'Add New Event',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Event',
+                'new_item' => 'New Event',
+                'view' => 'View Event',
+                'view_item' => 'View Event',
+                'search_items' => 'Search Events',
+                'not_found' => 'No Events Found',
                 'not_found_in_trash' => 'No Events Found in Trash',
-                'parent'             => 'Parent Event',
+                'parent' => 'Parent Event',
             )
         )
     );
@@ -179,17 +179,17 @@ function cptui_register_my_cpt_arcgis_maps()
     register_post_type(
         'arcgis_maps',
         array(
-            'label'           => 'ArcGiS Maps',
-            'description'     => '',
-            'public'          => true,
-            'show_ui'         => true,
-            'show_in_menu'    => true,
+            'label' => 'ArcGiS Maps',
+            'description' => '',
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'capability_type' => 'post',
-            'map_meta_cap'    => true,
-            'hierarchical'    => false,
-            'rewrite'         => array('slug' => 'arcgis_maps', 'with_front' => true),
-            'query_var'       => true,
-            'supports'        => array(
+            'map_meta_cap' => true,
+            'hierarchical' => false,
+            'rewrite' => array('slug' => 'arcgis_maps', 'with_front' => true),
+            'query_var' => true,
+            'supports' => array(
                 'title',
                 'editor',
                 'excerpt',
@@ -202,22 +202,22 @@ function cptui_register_my_cpt_arcgis_maps()
                 'page-attributes',
                 'post-formats'
             ),
-            'taxonomies'      => array('category'),
-            'labels'          => array(
-                'name'               => 'ArcGiS Maps',
-                'singular_name'      => 'ArcGiS Map',
-                'menu_name'          => 'ArcGiS Maps',
-                'add_new'            => 'Add ArcGiS Map',
-                'add_new_item'       => 'Add New ArcGiS Map',
-                'edit'               => 'Edit',
-                'edit_item'          => 'Edit ArcGiS Map',
-                'new_item'           => 'New ArcGiS Map',
-                'view'               => 'View ArcGiS Map',
-                'view_item'          => 'View ArcGiS Map',
-                'search_items'       => 'Search ArcGiS Maps',
-                'not_found'          => 'No ArcGiS Maps Found',
+            'taxonomies' => array('category'),
+            'labels' => array(
+                'name' => 'ArcGiS Maps',
+                'singular_name' => 'ArcGiS Map',
+                'menu_name' => 'ArcGiS Maps',
+                'add_new' => 'Add ArcGiS Map',
+                'add_new_item' => 'Add New ArcGiS Map',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit ArcGiS Map',
+                'new_item' => 'New ArcGiS Map',
+                'view' => 'View ArcGiS Map',
+                'view_item' => 'View ArcGiS Map',
+                'search_items' => 'Search ArcGiS Maps',
+                'not_found' => 'No ArcGiS Maps Found',
                 'not_found_in_trash' => 'No ArcGiS Maps Found in Trash',
-                'parent'             => 'Parent ArcGiS Map',
+                'parent' => 'Parent ArcGiS Map',
             )
         )
     );
@@ -233,17 +233,17 @@ function cptui_register_my_cpt_regional_planning()
     register_post_type(
         'regional_planning',
         array(
-            'label'           => 'Regional Planning',
-            'description'     => '',
-            'public'          => true,
-            'show_ui'         => true,
-            'show_in_menu'    => true,
+            'label' => 'Regional Planning',
+            'description' => '',
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'capability_type' => 'post',
-            'map_meta_cap'    => true,
-            'hierarchical'    => false,
-            'rewrite'         => array('slug' => 'regional_planning', 'with_front' => true),
-            'query_var'       => true,
-            'supports'        => array(
+            'map_meta_cap' => true,
+            'hierarchical' => false,
+            'rewrite' => array('slug' => 'regional_planning', 'with_front' => true),
+            'query_var' => true,
+            'supports' => array(
                 'title',
                 'editor',
                 'excerpt',
@@ -256,22 +256,22 @@ function cptui_register_my_cpt_regional_planning()
                 'page-attributes',
                 'post-formats'
             ),
-            'taxonomies'      => array('category'),
-            'labels'          => array(
-                'name'               => 'Regional Planning',
-                'singular_name'      => 'Regional Planning',
-                'menu_name'          => 'Regional Planning',
-                'add_new'            => 'Add Regional Planning',
-                'add_new_item'       => 'Add New Regional Planning',
-                'edit'               => 'Edit',
-                'edit_item'          => 'Edit Regional Planning',
-                'new_item'           => 'New Regional Planning',
-                'view'               => 'View Regional Planning',
-                'view_item'          => 'View Regional Planning',
-                'search_items'       => 'Search Regional Planning',
-                'not_found'          => 'No Regional Planning Found',
+            'taxonomies' => array('category'),
+            'labels' => array(
+                'name' => 'Regional Planning',
+                'singular_name' => 'Regional Planning',
+                'menu_name' => 'Regional Planning',
+                'add_new' => 'Add Regional Planning',
+                'add_new_item' => 'Add New Regional Planning',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Regional Planning',
+                'new_item' => 'New Regional Planning',
+                'view' => 'View Regional Planning',
+                'view_item' => 'View Regional Planning',
+                'search_items' => 'Search Regional Planning',
+                'not_found' => 'No Regional Planning Found',
                 'not_found_in_trash' => 'No Regional Planning Found in Trash',
-                'parent'             => 'Parent Regional Planning',
+                'parent' => 'Parent Regional Planning',
             )
         )
     );
@@ -292,24 +292,24 @@ function cptui_register_my_taxes_application_categories()
             0 => 'applications',
         ),
         array(
-            'hierarchical'      => true,
-            'label'             => 'Application Categories',
-            'show_ui'           => true,
-            'query_var'         => true,
+            'hierarchical' => true,
+            'label' => 'Application Categories',
+            'show_ui' => true,
+            'query_var' => true,
             'show_admin_column' => false,
-            'labels'            => array(
-                'search_items'               => 'Application Category',
-                'popular_items'              => '',
-                'all_items'                  => 'All Application Category',
-                'parent_item'                => 'Parent Application Category',
-                'parent_item_colon'          => 'Parent Application Category:',
-                'edit_item'                  => 'Edit Application Category',
-                'update_item'                => 'Update Application Category',
-                'add_new_item'               => 'Add New Application Category',
-                'new_item_name'              => 'New Application Category',
+            'labels' => array(
+                'search_items' => 'Application Category',
+                'popular_items' => '',
+                'all_items' => 'All Application Category',
+                'parent_item' => 'Parent Application Category',
+                'parent_item_colon' => 'Parent Application Category:',
+                'edit_item' => 'Edit Application Category',
+                'update_item' => 'Update Application Category',
+                'add_new_item' => 'Add New Application Category',
+                'new_item_name' => 'New Application Category',
                 'separate_items_with_commas' => '',
-                'add_or_remove_items'        => '',
-                'choose_from_most_used'      => '',
+                'add_or_remove_items' => '',
+                'choose_from_most_used' => '',
             )
         )
     );
@@ -328,24 +328,24 @@ function cptui_register_my_taxes_announcements_and_news()
             0 => 'post',
         ),
         array(
-            'hierarchical'      => true,
-            'label'             => 'Announcements and News',
-            'show_ui'           => true,
-            'query_var'         => true,
+            'hierarchical' => true,
+            'label' => 'Announcements and News',
+            'show_ui' => true,
+            'query_var' => true,
             'show_admin_column' => false,
-            'labels'            => array(
-                'search_items'               => 'Announcements and News',
-                'popular_items'              => '',
-                'all_items'                  => 'All Announcements and News',
-                'parent_item'                => 'Parent Announcements and News',
-                'parent_item_colon'          => 'Parent Announcements and News:',
-                'edit_item'                  => 'Edit Announcements and News',
-                'update_item'                => 'Update Announcements and News',
-                'add_new_item'               => 'Add New Announcements and News',
-                'new_item_name'              => 'New Announcements and News',
+            'labels' => array(
+                'search_items' => 'Announcements and News',
+                'popular_items' => '',
+                'all_items' => 'All Announcements and News',
+                'parent_item' => 'Parent Announcements and News',
+                'parent_item_colon' => 'Parent Announcements and News:',
+                'edit_item' => 'Edit Announcements and News',
+                'update_item' => 'Update Announcements and News',
+                'add_new_item' => 'Add New Announcements and News',
+                'new_item_name' => 'New Announcements and News',
                 'separate_items_with_commas' => '',
-                'add_or_remove_items'        => '',
-                'choose_from_most_used'      => '',
+                'add_or_remove_items' => '',
+                'choose_from_most_used' => '',
             )
         )
     );
@@ -362,25 +362,25 @@ function cptui_register_my_taxes_application_types()
     $role->remove_cap('manage_categories');
     if (current_user_can('level_10')) {
         $labelarray = array(
-            'search_items'               => 'Application Type',
-            'popular_items'              => '',
-            'all_items'                  => 'All Application Type',
-            'parent_item'                => 'Parent Application Type',
-            'parent_item_colon'          => 'Parent Application Type:',
-            'edit_item'                  => 'Edit Application Type',
-            'update_item'                => 'Update Application Type',
-            'add_new_item'               => 'Add New Application Type',
-            'new_item_name'              => 'New Application Type',
+            'search_items' => 'Application Type',
+            'popular_items' => '',
+            'all_items' => 'All Application Type',
+            'parent_item' => 'Parent Application Type',
+            'parent_item_colon' => 'Parent Application Type:',
+            'edit_item' => 'Edit Application Type',
+            'update_item' => 'Update Application Type',
+            'add_new_item' => 'Add New Application Type',
+            'new_item_name' => 'New Application Type',
             'separate_items_with_commas' => '',
-            'add_or_remove_items'        => '',
-            'choose_from_most_used'      => '',
+            'add_or_remove_items' => '',
+            'choose_from_most_used' => '',
         );
     } else {
         $labelarray = array(
-            'search_items'      => 'Application Type',
-            'popular_items'     => '',
-            'all_items'         => 'All Application Type',
-            'parent_item'       => 'Parent Application Type',
+            'search_items' => 'Application Type',
+            'popular_items' => '',
+            'all_items' => 'All Application Type',
+            'parent_item' => 'Parent Application Type',
             'parent_item_colon' => 'Parent Application Type:'
         );
     }
@@ -390,12 +390,12 @@ function cptui_register_my_taxes_application_types()
             0 => 'applications',
         ),
         array(
-            'hierarchical'      => true,
-            'label'             => 'Application Types',
-            'show_ui'           => true,
-            'query_var'         => true,
+            'hierarchical' => true,
+            'label' => 'Application Types',
+            'show_ui' => true,
+            'query_var' => true,
             'show_admin_column' => false,
-            'labels'            => $labelarray
+            'labels' => $labelarray
         )
     );
 }
@@ -413,24 +413,24 @@ function cptui_register_my_taxes_legacy_datacomm_tags()
             0 => 'post',
         ),
         array(
-            'hierarchical'      => true,
-            'label'             => 'Migrate legacy Tags',
-            'show_ui'           => true,
-            'query_var'         => true,
+            'hierarchical' => true,
+            'label' => 'Migrate legacy Tags',
+            'show_ui' => true,
+            'query_var' => true,
             'show_admin_column' => false,
-            'labels'            => array(
-                'search_items'               => 'Migrate legacy Tag',
-                'popular_items'              => '',
-                'all_items'                  => 'All Migrate legacy Tag',
-                'parent_item'                => 'Parent Migrate legacy Tag',
-                'parent_item_colon'          => 'Parent Migrate legacy Tag:',
-                'edit_item'                  => 'Edit Migrate legacy Tag',
-                'update_item'                => 'Update Migrate legacy Tag',
-                'add_new_item'               => 'Add New Migrate legacy Tag',
-                'new_item_name'              => 'New Migrate legacy Tag',
+            'labels' => array(
+                'search_items' => 'Migrate legacy Tag',
+                'popular_items' => '',
+                'all_items' => 'All Migrate legacy Tag',
+                'parent_item' => 'Parent Migrate legacy Tag',
+                'parent_item_colon' => 'Parent Migrate legacy Tag:',
+                'edit_item' => 'Edit Migrate legacy Tag',
+                'update_item' => 'Update Migrate legacy Tag',
+                'add_new_item' => 'Add New Migrate legacy Tag',
+                'new_item_name' => 'New Migrate legacy Tag',
                 'separate_items_with_commas' => '',
-                'add_or_remove_items'        => '',
-                'choose_from_most_used'      => '',
+                'add_or_remove_items' => '',
+                'choose_from_most_used' => '',
             )
         )
     );
@@ -481,9 +481,9 @@ add_filter('s2_post_types', 'my_post_types');
 function add_edge_control_header()
 {
     // get post id this way since none of the conditional tags are avaliable at this stage in the boostrap process
-    $url         = explode('?', 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
-    $post_id     = url_to_postid($url[0]);
-    $post_type   = get_post_type($post_id);
+    $url = explode('?', 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    $post_id = url_to_postid($url[0]);
+    $post_type = get_post_type($post_id);
     $post_format = get_post_format($post_id);
 
     if ($post_type == 'post' && !$post_format) { // post type is 'post' and post format is not set ==> blog post
@@ -530,14 +530,14 @@ function datagov_custom_keep_my_links($text)
 {
     $raw_excerpt = $text;
     if ('' == $text) {
-        $text           = get_the_content('');
-        $text           = strip_shortcodes($text);
-        $text           = apply_filters('the_content', $text);
-        $text           = str_replace(']]>', ']]>', $text);
-        $text           = strip_tags($text, '<a>');
+        $text = get_the_content('');
+        $text = strip_shortcodes($text);
+        $text = apply_filters('the_content', $text);
+        $text = str_replace(']]>', ']]>', $text);
+        $text = strip_tags($text, '<a>');
         $excerpt_length = apply_filters('excerpt_length', 55);
-        $excerpt_more   = apply_filters('excerpt_more', ' ' . '[...]');
-        $words          = preg_split(
+        $excerpt_more = apply_filters('excerpt_more', ' ' . '[...]');
+        $words = preg_split(
             '/(<a.*?a>)|\n|\r|\t|\s/',
             $text,
             $excerpt_length + 1,
@@ -554,8 +554,6 @@ function datagov_custom_keep_my_links($text)
 
     return apply_filters('new_wp_trim_excerpt', $text, $raw_excerpt);
 }
-
-include_once(dirname(dirname(__FILE__)) . '/suggested-datasets/suggested-datasets.php');
 
 add_filter('404_template', 'un_categorized_post_redirect');
 /**
@@ -664,7 +662,7 @@ function custom_post_categories_meta_box($post, $box)
                 <?php custom_wp_terms_checklist(
                     $post->ID,
                     array(
-                        'taxonomy'     => $taxonomy,
+                        'taxonomy' => $taxonomy,
                         'popular_cats' => $popular_ids
                     )
                 ) ?>
@@ -693,13 +691,13 @@ function custom_post_categories_meta_box($post, $box)
                     </label>
                     <?php
                     $args = array(
-                        'taxonomy'         => $taxonomy,
-                        'hide_empty'       => 0,
-                        'name'             => 'new' . $taxonomy . '_parent',
-                        'orderby'          => 'name',
-                        'hierarchical'     => 1,
+                        'taxonomy' => $taxonomy,
+                        'hide_empty' => 0,
+                        'name' => 'new' . $taxonomy . '_parent',
+                        'orderby' => 'name',
+                        'hierarchical' => 1,
                         'show_option_none' => '&mdash; ' . $tax->labels->parent_item . ' &mdash;',
-                        'exclude'          => array(get_term_by('name', 'Topic Introduction', $taxonomy)->term_id),
+                        'exclude' => array(get_term_by('name', 'Topic Introduction', $taxonomy)->term_id),
                     );
                     wp_dropdown_categories($args);
                     ?>
@@ -713,7 +711,7 @@ function custom_post_categories_meta_box($post, $box)
             </div>
         <?php endif; ?>
     </div>
-<?php
+    <?php
 }
 
 /**
@@ -724,13 +722,13 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
 {
     $defaults = array(
         'descendants_and_self' => 0,
-        'selected_cats'        => false,
-        'popular_cats'         => false,
-        'walker'               => null,
-        'taxonomy'             => 'category',
-        'checked_ontop'        => true
+        'selected_cats' => false,
+        'popular_cats' => false,
+        'walker' => null,
+        'taxonomy' => 'category',
+        'checked_ontop' => true
     );
-    $args     = apply_filters('wp_terms_checklist_args', $args, $post_id);
+    $args = apply_filters('wp_terms_checklist_args', $args, $post_id);
 
     extract(wp_parse_args($args, $defaults), EXTR_SKIP);
 
@@ -742,7 +740,7 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
 
     $args = array('taxonomy' => $taxonomy);
 
-    $tax              = get_taxonomy($taxonomy);
+    $tax = get_taxonomy($taxonomy);
     $args['disabled'] = !current_user_can($tax->cap->assign_terms);
 
     if (is_array($selected_cats)) {
@@ -759,10 +757,10 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
         $args['popular_cats'] = get_terms(
             $taxonomy,
             array(
-                'fields'       => 'ids',
-                'orderby'      => 'count',
-                'order'        => 'DESC',
-                'number'       => 10,
+                'fields' => 'ids',
+                'orderby' => 'count',
+                'order' => 'DESC',
+                'number' => 10,
                 'hierarchical' => false
             )
         );
@@ -772,12 +770,12 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
         $categories = (array)get_terms(
             $taxonomy,
             array(
-                'child_of'     => $descendants_and_self,
+                'child_of' => $descendants_and_self,
                 'hierarchical' => 0,
-                'hide_empty'   => 0
+                'hide_empty' => 0
             )
         );
-        $self       = get_term($descendants_and_self, $taxonomy);
+        $self = get_term($descendants_and_self, $taxonomy);
         array_unshift($categories, $self);
     } else {
         $categories = (array)get_terms($taxonomy, array('get' => 'all'));
@@ -791,7 +789,7 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
     if ($checked_ontop) {
         // Post process $categories rather than adding an exclude to the get_terms() query to keep the query the same across all posts (for any query cache)
         $checked_categories = array();
-        $keys               = array_keys($categories);
+        $keys = array_keys($categories);
 
         foreach ($keys as $k) {
             if (in_array($categories[$k]->term_id, $args['selected_cats'])) {
@@ -818,9 +816,9 @@ function custom_wp_terms_checklist($post_id = 0, $args = array())
  * @since 2.5.0
  *
  * @param string $taxonomy Taxonomy to retrieve terms from.
- * @param int    $default  Unused.
- * @param int    $number   Number of terms to retrieve. Defaults to 10.
- * @param bool   $echo     Optionally output the list as well. Defaults to true.
+ * @param int $default Unused.
+ * @param int $number Number of terms to retrieve. Defaults to 10.
+ * @param bool $echo Optionally output the list as well. Defaults to true.
  *
  * @return array List of popular term IDs.
  */
@@ -837,15 +835,15 @@ function custom_wp_popular_terms_checklist($taxonomy, $default = 0, $number = 10
     $terms = get_terms(
         $taxonomy,
         array(
-            'orderby'      => 'count',
-            'order'        => 'DESC',
-            'number'       => $number,
+            'orderby' => 'count',
+            'order' => 'DESC',
+            'number' => $number,
             'hierarchical' => false,
-            'exclude'      => array(get_term_by('name', 'Topic Introduction', $taxonomy)->term_id),
+            'exclude' => array(get_term_by('name', 'Topic Introduction', $taxonomy)->term_id),
         )
     );
 
-    $tax         = get_taxonomy($taxonomy);
+    $tax = get_taxonomy($taxonomy);
     $popular_ids = array();
     foreach ((array)$terms as $term) {
 
@@ -854,7 +852,7 @@ function custom_wp_popular_terms_checklist($taxonomy, $default = 0, $number = 10
         {
             continue;
         }
-        $id      = "popular-$taxonomy-$term->term_id";
+        $id = "popular-$taxonomy-$term->term_id";
         $checked = in_array($term->term_id, $checked_terms) ? 'checked="checked"' : '';
         ?>
 
@@ -868,7 +866,7 @@ function custom_wp_popular_terms_checklist($taxonomy, $default = 0, $number = 10
             </label>
         </li>
 
-    <?php
+        <?php
     }
 
     return $popular_ids;
@@ -894,7 +892,7 @@ function environment_conf_settings()
  */
 function ckan_environment_conf()
 {
-    $protocol            = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $ckan_default_server = (get_option('ckan_default_server') != '') ? get_option(
         'ckan_default_server'
     ) : 'catalog.data.gov/dataset';
@@ -921,7 +919,7 @@ function ckan_environment_conf()
         <input type="hidden" name="page_options" value="ckan_default_server"/>
         <input type="submit" name="Submit" value="Update"/>
     </form>
-<?php
+    <?php
 }
 
 add_action('admin_init', 'filter_rss_voting', 100);
@@ -1074,26 +1072,27 @@ function get_ckan_harvest_statistics()
 add_action('save_post', 'datagov_custom_add_category', 20);
 
 /**
- * This hook function that adds custom_permalink metadata to pages 
+ * This hook function that adds custom_permalink metadata to pages
  * in the following format: (%category%/%post_name%). This only works
  * for pages for which you don't explicitly set a permalink value.
  * In short, it auto populates the permalink field if left empty.
- * 
+ *
  * @param int post_id
  *   The id of the page
- * 
+ *
  */
 
-function datagov_custom_add_category($post_id) {
+function datagov_custom_add_category($post_id)
+{
 
     // If our form has not been submitted, we dont want to do anything
-    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
 
     // ignore wp_insert_post action that is called when the page
     // is in revision mode
-    if(wp_is_post_revision($post_id)) {
+    if (wp_is_post_revision($post_id)) {
         return;
     }
     // ignore wp_insert_post action that is called after 
@@ -1103,27 +1102,27 @@ function datagov_custom_add_category($post_id) {
     }
 
     $custom_permalink = get_post_meta($post_id, 'custom_permalink', true);
-    $permalink        = get_permalink($post_id);
-    $is_new_page      = datagov_custom_is_new_page($_POST['_wp_http_referer']);
+    $permalink = get_permalink($post_id);
+    $is_new_page = datagov_custom_is_new_page($_POST['_wp_http_referer']);
 
     if (empty($_POST['custom_permalink']) && empty($custom_permalink) && $is_new_page) {
         $post_terms = $_POST['post_category'];
 
-        if (!empty($post_terms)) { 
+        if (!empty($post_terms)) {
 
-	    // add category(s) slug only to new pages
+            // add category(s) slug only to new pages
             $post_term_id = end($post_terms);
-	    $term_exists  = term_exists((int) $post_term_id, "category");
-	    $is_term      = ($term_exists !==0) && ($term_exists !== NULL);
+            $term_exists = term_exists((int)$post_term_id, "category");
+            $is_term = ($term_exists !== 0) && ($term_exists !== NULL);
 
-	    if ($is_term) {
-                $post_term        = get_term((int) $post_term_id, "category");
-                $term_hirarchy    = datagov_custom_term_hirarchy($post_term);
-                $term_hirarchy    = implode("/", array_reverse($term_hirarchy));
+            if ($is_term) {
+                $post_term = get_term((int)$post_term_id, "category");
+                $term_hirarchy = datagov_custom_term_hirarchy($post_term);
+                $term_hirarchy = implode("/", array_reverse($term_hirarchy));
                 $custom_permalink = str_replace(home_url(), $term_hirarchy, $permalink);
 
                 add_post_meta($post_id, 'custom_permalink', $custom_permalink);
-	    }
+            }
         }
 
     }
@@ -1133,14 +1132,15 @@ function datagov_custom_add_category($post_id) {
 /**
  * This function checks if a new pages is being added
  * based on referer
- * 
+ *
  * @param string referer
  *
- * @return bool 
+ * @return bool
  *   true if its a new page otherwise false
  */
 
-function datagov_custom_is_new_page($referer) {
+function datagov_custom_is_new_page($referer)
+{
 
     $referer = sanitize_text_field($referer);
 
@@ -1153,22 +1153,23 @@ function datagov_custom_is_new_page($referer) {
 
 /**
  * This function figures out the custom_permalink taxonomy chunk.
- * In short, it will generate an array of parent slug (including the child slug) 
+ * In short, it will generate an array of parent slug (including the child slug)
  * given a child term id
- * 
+ *
  * @param object $child_term
  *
  * @return array $term_hirarchy
  */
 
-function datagov_custom_term_hirarchy($child_term) {
+function datagov_custom_term_hirarchy($child_term)
+{
     $parent_term = $child_term;
 
     while (!is_wp_error($parent_term)) {
         $term_hirarchy[] = $parent_term->slug;
-        $parent_term     = get_term((int) $parent_term->parent, 'category');
+        $parent_term = get_term((int)$parent_term->parent, 'category');
     }
-   
+
     return $term_hirarchy;
 }
 
@@ -1189,8 +1190,8 @@ function iword_file_path_config()
     $international_open_data = (get_option('international_open_data') != '') ? get_option(
         'international_open_data'
     ) : '';
-    $us_states_open_data     = (get_option('us_states_open_data') != '') ? get_option('us_states_open_data') : '';
-    $us_counties_open_data   = (get_option('us_counties_open_data') != '') ? get_option('us_counties_open_data') : '';
+    $us_states_open_data = (get_option('us_states_open_data') != '') ? get_option('us_states_open_data') : '';
+    $us_counties_open_data = (get_option('us_counties_open_data') != '') ? get_option('us_counties_open_data') : '';
     ?>
     <form action="options.php" method="post" name="options">
         <h2>iWorld List View File Settings</h2> <?php wp_nonce_field('update-options'); ?>
@@ -1230,13 +1231,13 @@ function iword_file_path_config()
                value="international_open_data,us_states_open_data,us_counties_open_data"/>
         <input type="submit" name="Submit" value="Update"/>
     </form>
-<?php
+    <?php
 }
 
 add_action('init', 'register_all_nav_menus');
 function register_all_nav_menus()
 {
-    $menus      = get_terms('nav_menu', array('hide_empty' => true));
+    $menus = get_terms('nav_menu', array('hide_empty' => true));
     $menu_names = array();
     foreach ($menus as $menu) {
         $menu_names[] = $menu->name;
@@ -1251,18 +1252,19 @@ function register_all_nav_menus()
 }
 
 add_action('create_category', 'new_function_create_highlight_page');
-function new_function_create_highlight_page($categ_id){
-    $catname = get_cat_name( $categ_id );
+function new_function_create_highlight_page($categ_id)
+{
+    $catname = get_cat_name($categ_id);
     $post = array(
-        'post_category'  => array($categ_id),
-        'post_title'     => $catname.' Hightlights',
-        'post_status'    => 'publish',
-        'post_type'      => 'page',
-        'page_template'   => 'template-categories-highlights.php'
+        'post_category' => array($categ_id),
+        'post_title' => $catname . ' Hightlights',
+        'post_status' => 'publish',
+        'post_type' => 'page',
+        'page_template' => 'template-categories-highlights.php'
     );
     $new_post_id = wp_insert_post($post);
-    $edit_post= array(
-        'ID'           => $new_post_id,
+    $edit_post = array(
+        'ID' => $new_post_id,
         'post_name' => 'Highlights '
     );
     wp_update_post($edit_post);
@@ -1272,10 +1274,10 @@ function new_function_create_highlight_page($categ_id){
 /**
  * Disable update notifications on production
  */
-if ( defined('ENVIRONMENT') && ('production' == ENVIRONMENT) ) {
-    add_action( 'init', create_function( '$a', "remove_action( 'init', 'wp_version_check' );" ), 2 );
-    add_filter( 'pre_option_update_core', create_function( '$a', "return null;" ) );
-    add_filter( 'wp_get_update_data', create_function( '$a', "return null;" ) );
+if (defined('ENVIRONMENT') && ('production' == ENVIRONMENT)) {
+    add_action('init', create_function('$a', "remove_action( 'init', 'wp_version_check' );"), 2);
+    add_filter('pre_option_update_core', create_function('$a', "return null;"));
+    add_filter('wp_get_update_data', create_function('$a', "return null;"));
 }
 
 /**
@@ -1284,28 +1286,29 @@ if ( defined('ENVIRONMENT') && ('production' == ENVIRONMENT) ) {
  * including all possible httpStatus codes
  */
 
-function datagov_custom_purge_akamai_cache($post_id) {
+function datagov_custom_purge_akamai_cache($post_id)
+{
 
     // don't do anything if this is a revision
     if (wp_is_post_revision($post_id)) {
         return;
     }
 
-    $post_permalink      = get_permalink($post_id);
+    $post_permalink = get_permalink($post_id);
     #$post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink); 
-    $objects             = array($post_permalink);
-    $username            = get_option('akamai_username');
-    $password            = get_option('akamai_password');
-    $akamai_endpoint     = 'https://api.ccu.akamai.com/ccu/v2/queues/default';
-    $content_type_header = "Content-Type:application/json"; 
+    $objects = array($post_permalink);
+    $username = get_option('akamai_username');
+    $password = get_option('akamai_password');
+    $akamai_endpoint = 'https://api.ccu.akamai.com/ccu/v2/queues/default';
+    $content_type_header = "Content-Type:application/json";
 
     $request_body = array(
-        "type"    => 'arl',
-	"action"  => 'invalidate',
-	"domain"  => 'production',
-	"objects" => $objects,
-    );  
-   
+        "type" => 'arl',
+        "action" => 'invalidate',
+        "domain" => 'production',
+        "objects" => $objects,
+    );
+
     $request_body = json_encode($request_body);
 
     // send a curl post to akamai end point + fetch response
@@ -1314,21 +1317,21 @@ function datagov_custom_purge_akamai_cache($post_id) {
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array($content_type_header));
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
-    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password"); 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
     $response = curl_exec($ch);
     curl_close($ch);
     $response = json_decode($response);
 
-    $purge_status  = "Please purge the akamai URL of this post manually, "; 
+    $purge_status = "Please purge the akamai URL of this post manually, ";
     $purge_status .= "or wait for the daily Akamai cache purge. ";
 
     if (isset($response->httpStatus)) {
         if ($response->httpStatus == '201') {
-	    $estimatedSeconds = $response->estimatedSeconds;
-            $purge_status     = "Edits that have been made to this post will be reflected on the ";
-	    $purge_status    .= "public facing website in approximately $estimatedSeconds seconds. "; 
+            $estimatedSeconds = $response->estimatedSeconds;
+            $purge_status = "Edits that have been made to this post will be reflected on the ";
+            $purge_status .= "public facing website in approximately $estimatedSeconds seconds. ";
         }
     }
 
@@ -1338,8 +1341,9 @@ function datagov_custom_purge_akamai_cache($post_id) {
 /**
  * Append akamai purge status to post/page messages
  */
-function akamai_purge_message($messages) {
-    $purge_status        = $_SESSION['purge_status'];
+function akamai_purge_message($messages)
+{
+    $purge_status = $_SESSION['purge_status'];
     $messages['page'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['page'][1]);
     $messages['post'][1] = str_replace('Post updated.', 'Post updated. ' . $purge_status, $messages['post'][1]);
 
@@ -1361,11 +1365,12 @@ if (get_option('akamai_enable_purge') == 1) {
 
 
 add_filter('request', 'feed_request');
-function feed_request($qv){
+function feed_request($qv)
+{
     $post_type = $_GET['post_type'];
     $rss_post_types = array('post', 'page');
-    if(isset($qv['feed']) && isset($qv['post_type'])){
-        if(empty($post_type))
+    if (isset($qv['feed']) && isset($qv['post_type'])) {
+        if (empty($post_type))
             $qv['post_type'] = $rss_post_types;
         else
             $qv['post_type'] = array($post_type);
@@ -1373,52 +1378,54 @@ function feed_request($qv){
     return $qv;
 }
 
-add_action( 'pre_get_posts', 'exclude_status_from_feeds' );
-function exclude_status_from_feeds( &$wp_query ) {
-    if ( $wp_query->is_feed() ) {
+add_action('pre_get_posts', 'exclude_status_from_feeds');
+function exclude_status_from_feeds(&$wp_query)
+{
+    if ($wp_query->is_feed()) {
         $format = $_GET['format'];
         $wp_query->set('orderby', 'modified');
         $post_format_array = array('');
-        if(!empty($format)){
-            if($format=="standard"){
-                $post_formats_to_exclude = array('post-format-status','post-format-link','post-format-image','post-format-gallery');
-                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
-            }
-            else {
-                $post_formats_to_include = array('post-format-'.$format);
-                $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_include );
+        if (!empty($format)) {
+            if ($format == "standard") {
+                $post_formats_to_exclude = array('post-format-status', 'post-format-link', 'post-format-image', 'post-format-gallery');
+                $extra_tax_query = array('taxonomy' => 'post_format', 'field' => 'slug', 'terms' => $post_formats_to_exclude, 'operator' => 'NOT IN');
+            } else {
+                $post_formats_to_include = array('post-format-' . $format);
+                $extra_tax_query = array('taxonomy' => 'post_format', 'field' => 'slug', 'terms' => $post_formats_to_include);
             }
         } else {
             $post_formats_to_exclude = array('post-format-status');
-            $extra_tax_query = array( 'taxonomy' => 'post_format','field' => 'slug', 'terms' => $post_formats_to_exclude,'operator' => 'NOT IN' );
+            $extra_tax_query = array('taxonomy' => 'post_format', 'field' => 'slug', 'terms' => $post_formats_to_exclude, 'operator' => 'NOT IN');
         }
 
-        $tax_query = $wp_query->get( 'tax_query' );
-        if ( is_array( $tax_query ) ) {
+        $tax_query = $wp_query->get('tax_query');
+        if (is_array($tax_query)) {
             $tax_query = $tax_query + $extra_tax_query;
         } else {
-            $tax_query = array( $extra_tax_query );
+            $tax_query = array($extra_tax_query);
         }
-        $wp_query->set( 'tax_query', $tax_query );
+        $wp_query->set('tax_query', $tax_query);
     }
 }
 
 
-remove_all_actions( 'do_feed_atom' );
-add_action( 'do_feed_atom', 'load_custom_atom_feed');
-function load_custom_atom_feed() {
+remove_all_actions('do_feed_atom');
+add_action('do_feed_atom', 'load_custom_atom_feed');
+function load_custom_atom_feed()
+{
     $template = get_template_directory() . '/template-feed-atom.php';
-    load_template( $template );
+    load_template($template);
 }
 
-remove_all_actions( 'do_feed_rss2' );
-add_action( 'do_feed_rss2', 'load_custom_rss2_feed');
-function load_custom_rss2_feed() {
+remove_all_actions('do_feed_rss2');
+add_action('do_feed_rss2', 'load_custom_rss2_feed');
+function load_custom_rss2_feed()
+{
     $template = get_template_directory() . '/template-feed-rss2.php';
-    load_template( $template );
+    load_template($template);
 }
 
-/** 
+/**
  * Add id tag to Federated-Analytics handle defined in wp_eunque function in roots theme
  */
 add_filter('script_loader_tag', function ($tag, $handle) {
@@ -1426,5 +1433,5 @@ add_filter('script_loader_tag', function ($tag, $handle) {
     if ('Federated-Analytics' !== $handle)
         return $tag;
 
-    return str_replace( ' src', ' id="_fed_an_ua_tag" src', $tag );
-}, 10, 2 );
+    return str_replace(' src', ' id="_fed_an_ua_tag" src', $tag);
+}, 10, 2);
