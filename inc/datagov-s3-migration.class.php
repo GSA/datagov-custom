@@ -17,7 +17,6 @@ if (!class_exists('Datagov_S3_Migrator')) {
                 die('s3 plugin is not configured');
             }
 
-            $s3_config = unserialize($s3_config);
             $bucket = $s3_config['bucket'];
             $prefix = $s3_config['object-prefix'];
             $region = $s3_config['region'];
@@ -28,17 +27,14 @@ if (!class_exists('Datagov_S3_Migrator')) {
 
             $attrs = array(
                 'post_type' => 'attachment',
-                'numberposts' => 99999
+                'numberposts' => 9999
             );
             $images = get_posts($attrs);
 
             foreach($images as $img) {
                 $file = get_post_meta($img->ID, '_wp_attached_file', true);
-                $s3_info = get_post_meta($img->ID, 'amazonS3_info', true);
+//                $s3_info = get_post_meta($img->ID, 'amazonS3_info', true);
                 $update_required = false;
-//                if (!$s3_info || FALSE === unserialize($s3_info)) {
-//                    $update_required = true;
-//                }
 
                 if (true || $update_required) {
                     $s3_info = array(
@@ -53,7 +49,7 @@ if (!class_exists('Datagov_S3_Migrator')) {
                         echo 'FILE NOT FOUND';
                     } else {
                         echo 'OK';
-                        $s3_info = serialize($s3_info);
+//                        $s3_info = serialize($s3_info);
                         if ( ! add_post_meta( $img->ID, 'amazonS3_info', $s3_info, true ) ) {
                             update_post_meta ( $img->ID, 'amazonS3_info', $s3_info );
                         }

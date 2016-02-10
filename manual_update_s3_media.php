@@ -16,6 +16,9 @@ if (current_user_can('manage_options')) {
     error_reporting(E_ALL);
     ini_set('display_errors', true);
 
+    ignore_user_abort(true);
+    set_time_limit(60*60);
+
 //    if (!class_exists('Amazon_S3_And_CloudFront')) {
 //        die('Amazon_S3_And_CloudFront plugin not found');
 //    }

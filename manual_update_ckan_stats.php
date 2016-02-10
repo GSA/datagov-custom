@@ -7,6 +7,9 @@ require_once ('../../../wp/wp-blog-header.php');
 if (current_user_can( 'manage_options' )) {
     error_reporting(E_ALL);
     ini_set('display_errors', true);
+
+    ignore_user_abort(true);
+
     require_once(__DIR__ . '/inc/ckan-harvest-stats.class.php');
 
     $ckan = new CKAN_Harvest_Stats;
