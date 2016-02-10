@@ -1049,7 +1049,7 @@ if (!wp_next_scheduled('ckan_harvest_statistics_daily')) {
 
 add_action('ckan_harvest_statistics_daily', 'get_ckan_harvest_statistics');
 
-include_once('ckan-harvest-stats.class.php');
+include_once(__DIR__.'/inc/ckan-harvest-stats.class.php');
 
 /**
  * Get latest harvest statistics from catalog.data.gov
