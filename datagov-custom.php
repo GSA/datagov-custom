@@ -1,16 +1,24 @@
 <?php
 /*
-Plugin Name: Datagov Custom
-Description: This plugin holds custom types/taxnomies definitions, actions, filters etc.
-Version: 1.0
+Plugin Name:    DataGov Custom
+Description:    This plugin holds custom types/taxonomies definitions, actions, filters etc.
+Version:    1.0
+License:    CC0
+License URI:    https://creativecommons.org/publicdomain/zero/1.0/
+Author:     GSA
+Author URI: https://github.com/GSA
 */
+
+// Safety first
+defined('ABSPATH') or die('No script kiddies please!');
 
 // Define current version constant
 # define( 'DCPT_VERSION', '0.8.1' );
 
+
 $purge_status = "";
 
-//Custom Post Types
+// Custom Post Types
 
 add_action('init', 'menu_cleanup_no_groups');
 
@@ -1049,7 +1057,7 @@ if (!wp_next_scheduled('ckan_harvest_statistics_daily')) {
 
 add_action('ckan_harvest_statistics_daily', 'get_ckan_harvest_statistics');
 
-include_once(__DIR__.'/inc/ckan-harvest-stats.class.php');
+include_once(__DIR__ . '/inc/ckan-harvest-stats.class.php');
 
 /**
  * Get latest harvest statistics from catalog.data.gov
