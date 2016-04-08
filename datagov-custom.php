@@ -1083,48 +1083,29 @@ function get_taxonomy_hierarchy( $taxonomy, $parent = 0 ) {
     return $children;
 }
 
-add_action('cron_prepopulate_application_agencies', 'datagov_prepopulate_application_agencies');
-add_action('admin_init', 'datagov_prepopulate_application_agencies');
+add_action('cron_repopulate_application_agencies', 'datagov_repopulate_application_agencies');
 /**
  * @return bool|void
  */
-function datagov_prepopulate_application_agencies()
+function datagov_repopulate_application_agencies()
 {
-    $existing_terms = get_terms(
-        'application_agencies',
-        array(
-            'hide_empty' => false,  //  yes, show unassigned terms too
-        )
-    );
-    if (sizeof($existing_terms)) {
-//        if taxonomies exist, we can't proceed
-        return;
-//        if ('delete-all' == get_option('app_ag')) {
-//            foreach($existing_terms as $term) {
-//                wp_delete_term($term->term_id, 'application_agencies');
-//            }
-//        }
-    }
-
     try {
-        $json = file_get_contents('http://www.data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json');
+        $url = get_option('org_server');
+        $json = file_get_contents($url);
         if (false === $json) {
-            return;
-//            throw new Exception('could not access fed_agency.json');
+            trigger_error('could not access fed_agency.json');
         }
 //        decode result as array
         $json_result = json_decode($json, true);
         if (!isset($json_result['taxonomies'])) {
-//            unexpected json format
-            return;
+            trigger_error('unexpected json format');
         }
 
 //        let's separate parents and chidren
         $tax_parents = $tax_children = array();
         foreach ($json_result['taxonomies'] as $taxonomy) {
             if (!isset($taxonomy['taxonomy'])) {
-//                unexpected json format
-                return;
+                trigger_error('unexpected json format');
             }
             $taxonomy = $taxonomy['taxonomy'];  //  weird ;)
             if (!isset($taxonomy['Federal Agency'])
@@ -1151,35 +1132,38 @@ function datagov_prepopulate_application_agencies()
 //        let's put them to database finally
         foreach ($tax_parents as $tax_parent) {
 //            parent first
-            $parent_term = wp_insert_term(
-                trim($tax_parent['Federal Agency']),
-                'application_agencies',
-                array(
-                    'slug' => trim($tax_parent['unique id'])
-                )
-            );
-            if (is_wp_error($parent_term)) {
-                var_dump($tax_parent);
-                echo $parent_term->get_error_message();
-                return;
+            $parent_term = get_term_by('slug', trim($tax_parent['unique id']), 'application_agencies');
+            if (!$parent_term) {
+                $parent_term = wp_insert_term(
+                    trim($tax_parent['Federal Agency']),
+                    'application_agencies',
+                    array(
+                        'slug' => trim($tax_parent['unique id'])
+                    )
+                );
+
+                if (is_wp_error($parent_term)) {
+                    trigger_error($parent_term->get_error_message());
+                }
             }
 
 //            now children, if exist
             if (isset($tax_children[$tax_parent['Federal Agency']])) {
                 $children = $tax_children[$tax_parent['Federal Agency']];
                 foreach ($children as $child) {
-                    $result = wp_insert_term(
-                        trim($child['Sub Agency']),
-                        'application_agencies',
-                        array(
-                            'slug' => trim($child['unique id']),
-                            'parent' => $parent_term['term_id']
-                        )
-                    );
-                    if (is_wp_error($result)) {
-                        var_dump($result);
-                        echo $result->get_error_message();
-                        return;
+                    $existing_child = get_term_by('slug', trim($child['unique id']), 'application_agencies');
+                    if (!$existing_child) {
+                        $result = wp_insert_term(
+                            trim($child['Sub Agency']),
+                            'application_agencies',
+                            array(
+                                'slug' => trim($child['unique id']),
+                                'parent' => $parent_term['term_id']
+                            )
+                        );
+                        if (is_wp_error($result)) {
+                            trigger_error($result->get_error_message());
+                        }
                     }
                 }
 
