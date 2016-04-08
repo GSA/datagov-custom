@@ -22,6 +22,9 @@ $purge_status = "";
 
 add_action('init', 'menu_cleanup_no_groups');
 
+/**
+ *
+ */
 function menu_cleanup_no_groups()
 {
     if (current_user_can('manage_options')) {
@@ -102,7 +105,7 @@ function cptui_register_my_cpt_applications()
             'rewrite' => array('slug' => 'applications', 'with_front' => true),
             'query_var' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
-            'taxonomies' => array('category', 'application categories', 'application types'),
+            'taxonomies' => array('application agencies', 'category', 'application categories', 'application types'),
             'labels' => array(
                 'name' => 'Applications',
                 'singular_name' => 'Application',
@@ -315,6 +318,46 @@ function cptui_register_my_taxes_application_categories()
                 'update_item' => 'Update Application Category',
                 'add_new_item' => 'Add New Application Category',
                 'new_item_name' => 'New Application Category',
+                'separate_items_with_commas' => '',
+                'add_or_remove_items' => '',
+                'choose_from_most_used' => '',
+            )
+        )
+    );
+}
+
+#Application Agencies
+add_action('init', 'datagov_register_my_taxonomies_application_agencies');
+/**
+ *
+ */
+function datagov_register_my_taxonomies_application_agencies()
+{
+    register_taxonomy(
+        'application_agencies',
+        'applications',
+        array(
+            'public' => true,
+            'label' => 'Application Agencies',
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_nav_menus' => true,
+            'show_tagcloud' => false,
+            'show_in_quick_edit' => true,
+            'description' => 'Agencies from fed_agency.json , ' .
+                'ex. http://www.data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json',
+            'hierarchical' => true,
+            'rewrite' => array('slug' => 'agency'),
+            'labels' => array(
+                'search_items' => 'Application Agencies',
+                'popular_items' => '',
+                'all_items' => 'All Application Agencies',
+                'parent_item' => 'Parent Application Agency',
+                'parent_item_colon' => 'Parent Application Agency:',
+                'edit_item' => 'Edit Application Agency',
+                'update_item' => 'Update Application Agency',
+                'add_new_item' => 'Add New Application Agency',
+                'new_item_name' => 'New Application Agency',
                 'separate_items_with_commas' => '',
                 'add_or_remove_items' => '',
                 'choose_from_most_used' => '',
@@ -995,6 +1038,115 @@ function ckan_count_cron()
     return true;
 }
 
+add_action('cron_prepopulate_application_agencies', 'datagov_prepopulate_application_agencies');
+add_action('admin_init', 'datagov_prepopulate_application_agencies');
+/**
+ * @return bool|void
+ */
+function datagov_prepopulate_application_agencies()
+{
+    $existing_terms = get_terms(
+        'application_agencies',
+        array(
+            'hide_empty' => false,  //  yes, show unassigned terms too
+        )
+    );
+    if (sizeof($existing_terms)) {
+//        if taxonomies exist, we can't proceed
+        return;
+//        if ('delete-all' == get_option('app_ag')) {
+//            foreach($existing_terms as $term) {
+//                wp_delete_term($term->term_id, 'application_agencies');
+//            }
+//        }
+    }
+
+    try {
+        $json = file_get_contents('http://www.data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json');
+        if (false === $json) {
+            return;
+//            throw new Exception('could not access fed_agency.json');
+        }
+//        decode result as array
+        $json_result = json_decode($json, true);
+        if (!isset($json_result['taxonomies'])) {
+//            unexpected json format
+            return;
+        }
+
+//        let's separate parents and chidren
+        $tax_parents = $tax_children = array();
+        foreach ($json_result['taxonomies'] as $taxonomy) {
+            if (!isset($taxonomy['taxonomy'])) {
+//                unexpected json format
+                return;
+            }
+            $taxonomy = $taxonomy['taxonomy'];  //  weird ;)
+            if (!isset($taxonomy['Federal Agency'])
+                || !isset($taxonomy['unique id'])
+                || !isset($taxonomy['Sub Agency'])
+                || '' == trim($taxonomy['Federal Agency'])
+                || '' == trim($taxonomy['unique id'])
+            ) {
+//                skip bad boys
+                continue;
+            }
+            if ('' == $taxonomy['Sub Agency']) {
+//                that's a parent
+                $tax_parents[] = $taxonomy;
+                continue;
+            }
+//            that's a child
+            if (!isset($tax_children[$taxonomy['Federal Agency']])) {
+                $tax_children[$taxonomy['Federal Agency']] = array();
+            }
+            $tax_children[$taxonomy['Federal Agency']][] = $taxonomy;
+        }
+
+//        let's put them to database finally
+        foreach ($tax_parents as $tax_parent) {
+//            parent first
+            $parent_term = wp_insert_term(
+                trim($tax_parent['Federal Agency']),
+                'application_agencies',
+                array(
+                    'slug' => trim($tax_parent['unique id'])
+                )
+            );
+            if (is_wp_error($parent_term)) {
+                var_dump($tax_parent);
+                echo $parent_term->get_error_message();
+                return;
+            }
+
+//            now children, if exist
+            if (isset($tax_children[$tax_parent['Federal Agency']])) {
+                $children = $tax_children[$tax_parent['Federal Agency']];
+                foreach ($children as $child) {
+                    $result = wp_insert_term(
+                        trim($child['Sub Agency']),
+                        'application_agencies',
+                        array(
+                            'slug' => trim($child['unique id']),
+                            'parent' => $parent_term['term_id']
+                        )
+                    );
+                    if (is_wp_error($result)) {
+                        var_dump($result);
+                        echo $result->get_error_message();
+                        return;
+                    }
+                }
+
+            }
+        }
+    } catch (Exception $ex) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * Avoid
  * http://wptavern.com/how-to-prevent-wordpress-from-participating-in-pingback-denial-of-service-attacks
@@ -1015,6 +1167,10 @@ add_filter('xmlrpc_methods', 'stoppingbacks');
 // http://stackoverflow.com/questions/18944027
 // Adapted from https://gist.github.com/toscho/1584783
 add_filter(
+/**
+ * @param $url
+ * @return string
+ */
     'clean_url',
     /**
      * @param $url
@@ -1182,6 +1338,9 @@ function datagov_custom_term_hirarchy($child_term)
 }
 
 add_action('admin_menu', 'iworld_map_configurations');
+/**
+ *
+ */
 function iworld_map_configurations()
 {
     add_menu_page(
@@ -1193,6 +1352,9 @@ function iworld_map_configurations()
     );
 }
 
+/**
+ *
+ */
 function iword_file_path_config()
 {
     $international_open_data = (get_option('international_open_data') != '') ? get_option(
@@ -1243,6 +1405,9 @@ function iword_file_path_config()
 }
 
 add_action('init', 'register_all_nav_menus');
+/**
+ *
+ */
 function register_all_nav_menus()
 {
     $menus = get_terms('nav_menu', array('hide_empty' => true));
@@ -1260,6 +1425,9 @@ function register_all_nav_menus()
 }
 
 add_action('create_category', 'new_function_create_highlight_page');
+/**
+ * @param $categ_id
+ */
 function new_function_create_highlight_page($categ_id)
 {
     $catname = get_cat_name($categ_id);
@@ -1373,6 +1541,10 @@ if (get_option('akamai_enable_purge') == 1) {
 
 
 add_filter('request', 'feed_request');
+/**
+ * @param $qv
+ * @return mixed
+ */
 function feed_request($qv)
 {
     $post_type = $_GET['post_type'];
@@ -1387,6 +1559,9 @@ function feed_request($qv)
 }
 
 add_action('pre_get_posts', 'exclude_status_from_feeds');
+/**
+ * @param $wp_query
+ */
 function exclude_status_from_feeds(&$wp_query)
 {
     if ($wp_query->is_feed()) {
@@ -1419,6 +1594,9 @@ function exclude_status_from_feeds(&$wp_query)
 
 remove_all_actions('do_feed_atom');
 add_action('do_feed_atom', 'load_custom_atom_feed');
+/**
+ *
+ */
 function load_custom_atom_feed()
 {
     $template = get_template_directory() . '/template-feed-atom.php';
@@ -1427,6 +1605,9 @@ function load_custom_atom_feed()
 
 remove_all_actions('do_feed_rss2');
 add_action('do_feed_rss2', 'load_custom_rss2_feed');
+/**
+ *
+ */
 function load_custom_rss2_feed()
 {
     $template = get_template_directory() . '/template-feed-rss2.php';
@@ -1436,7 +1617,12 @@ function load_custom_rss2_feed()
 /**
  * Add id tag to Federated-Analytics handle defined in wp_eunque function in roots theme
  */
-add_filter('script_loader_tag', function ($tag, $handle) {
+add_filter(/**
+ * @param $tag
+ * @param $handle
+ * @return mixed
+ */
+    'script_loader_tag', function ($tag, $handle) {
 
     if ('Federated-Analytics' !== $handle)
         return $tag;
