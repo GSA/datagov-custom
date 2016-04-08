@@ -348,6 +348,12 @@ function datagov_register_my_taxonomies_application_agencies()
                 'ex. http://www.data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json',
             'hierarchical' => true,
             'rewrite' => array('slug' => 'agency'),
+            'capabilities' => array(
+                'manage_terms' => false,
+                'edit_terms'   => false,
+                'delete_terms' => false,
+                'assign_terms' => 'edit_posts',
+            ),
             'labels' => array(
                 'search_items' => 'Application Agencies',
                 'popular_items' => '',
