@@ -126,7 +126,7 @@ function cptui_register_my_cpt_applications()
     );
 }
 
-#Applications
+#Impacts
 add_action('init', 'cptui_register_my_cpt_impact');
 /**
  *
@@ -134,15 +134,36 @@ add_action('init', 'cptui_register_my_cpt_impact');
 function cptui_register_my_cpt_impact()
 {
     register_post_type(
-        'impacts',
+        'impact',
         array(
             'label' => 'Impact',
             'public' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
-            'rewrite' => array('slug' => 'impacts', 'with_front' => true),
-            'taxonomies' => array('category')
+            'rewrite' => array('slug' => 'impact', 'with_front' => true),
+            'map_meta_cap' => true,
+            'taxonomies' => array('category'),
+            'feeds'      => true, // bool (defaults to the 'has_archive' argument)
+            'has_archive' => true,
+            'supports' => array(
+                'title',
+                'editor',
+                'revisions'
+            )
         )
     );
+
+    add_rewrite_rule('^impact/?$','?post_type=impact');
+}
+
+function remove_cssjs_ver( $src ) {
+    if( strpos( $src, '?ver=' ) )
+        $src = remove_query_arg( 'ver', $src );
+    return $src;
+}
+
+if (is_admin()){
+    add_filter( 'style_loader_src', 'remove_cssjs_ver', 9999 );
+    add_filter( 'script_loader_src', 'remove_cssjs_ver', 9999 );
 }
 
 #Events
@@ -592,6 +613,10 @@ function datagov_custom_js()
     if (is_admin()) {
         wp_register_script('datagov_custom_misc_js', plugins_url('/datagov-custom-misc.js', __FILE__), array('jquery'));
         wp_enqueue_script('datagov_custom_misc_js');
+
+//        wp_deregister_script('jquery');
+//        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"), false, '2.2.4', false);
+//        wp_enqueue_script('jquery');
     }
 }
 
@@ -1283,6 +1308,8 @@ add_filter(
     function ($url) {
         if (false === strpos($url, '.js')
             OR false !== strpos($url, '/jquery.min.js')
+            OR false !== strpos($url, '/jquery.colorbox.js')
+            OR false !== strpos($url, '/jquery.js')
             OR false !== strpos($url, 'advanced-custom-fields')
         ) { // not our file
             return $url;
