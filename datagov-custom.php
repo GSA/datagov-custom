@@ -126,6 +126,46 @@ function cptui_register_my_cpt_applications()
     );
 }
 
+#Impacts
+add_action('init', 'cptui_register_my_cpt_impact');
+/**
+ *
+ */
+function cptui_register_my_cpt_impact()
+{
+    register_post_type(
+        'impact',
+        array(
+            'label' => 'Impact',
+            'public' => true,
+            'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
+            'rewrite' => array('slug' => 'impact', 'with_front' => true),
+            'map_meta_cap' => true,
+            'taxonomies' => array('category'),
+            'feeds'      => true, // bool (defaults to the 'has_archive' argument)
+            'has_archive' => true,
+            'supports' => array(
+                'title',
+                'editor',
+                'revisions'
+            )
+        )
+    );
+
+    add_rewrite_rule('^impact/?$','?post_type=impact');
+}
+
+function remove_cssjs_ver( $src ) {
+    if( strpos( $src, '?ver=' ) )
+        $src = remove_query_arg( 'ver', $src );
+    return $src;
+}
+
+if (is_admin()){
+    add_filter( 'style_loader_src', 'remove_cssjs_ver', 9999 );
+    add_filter( 'script_loader_src', 'remove_cssjs_ver', 9999 );
+}
+
 #Events
 add_action('init', 'cptui_register_my_cpt_events');
 /**
@@ -350,7 +390,7 @@ function datagov_register_my_taxonomies_application_agencies()
             'rewrite' => array('slug' => 'agency'),
             'capabilities' => array(
                 'manage_terms' => false,
-                'edit_terms'   => false,
+                'edit_terms' => false,
                 'delete_terms' => false,
                 'assign_terms' => 'edit_posts',
             ),
@@ -573,6 +613,10 @@ function datagov_custom_js()
     if (is_admin()) {
         wp_register_script('datagov_custom_misc_js', plugins_url('/datagov-custom-misc.js', __FILE__), array('jquery'));
         wp_enqueue_script('datagov_custom_misc_js');
+
+//        wp_deregister_script('jquery');
+//        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"), false, '2.2.4', false);
+//        wp_enqueue_script('jquery');
     }
 }
 
@@ -1044,11 +1088,17 @@ function ckan_count_cron()
     return true;
 }
 
-function add_app_agency_query_var( $vars ){
+/**
+ * @param $vars
+ * @return array
+ */
+function add_app_agency_query_var($vars)
+{
     $vars[] = "app_agency";
     return $vars;
 }
-add_filter( 'query_vars', 'add_app_agency_query_var' );
+
+add_filter('query_vars', 'add_app_agency_query_var');
 
 /**
  * Recursively get taxonomy hierarchy
@@ -1058,12 +1108,13 @@ add_filter( 'query_vars', 'add_app_agency_query_var' );
  * @param int $parent - parent term id
  * @return array
  */
-function get_taxonomy_hierarchy( $taxonomy, $parent = 0 ) {
+function get_taxonomy_hierarchy($taxonomy, $parent = 0)
+{
     // only 1 taxonomy
-    $taxonomy = is_array( $taxonomy ) ? array_shift( $taxonomy ) : $taxonomy;
+    $taxonomy = is_array($taxonomy) ? array_shift($taxonomy) : $taxonomy;
 
     // get all direct decendents of the $parent
-    $terms = get_terms( $taxonomy, array( 'parent' => $parent ) );
+    $terms = get_terms($taxonomy, array('parent' => $parent));
 
     // prepare a new array.  these are the children of $parent
     // we'll ultimately copy all the $terms into this new array, but only after they
@@ -1071,12 +1122,12 @@ function get_taxonomy_hierarchy( $taxonomy, $parent = 0 ) {
     $children = array();
 
     // go through all the direct decendents of $parent, and gather their children
-    foreach ( $terms as $term ){
+    foreach ($terms as $term) {
         // recurse to get the direct decendents of "this" term
-        $term->children = get_taxonomy_hierarchy( $taxonomy, $term->term_id );
+        $term->children = get_taxonomy_hierarchy($taxonomy, $term->term_id);
 
         // add the term to our new array
-        $children[ $term->term_id ] = $term;
+        $children[$term->term_id] = $term;
     }
 
     // send the results back to the caller
@@ -1101,8 +1152,8 @@ function datagov_repopulate_application_agencies()
             trigger_error('unexpected json format');
         }
 
-//        let's separate parents and chidren
-        $tax_parents = $tax_children = array();
+//        let's separate parents, chidren and grandchildren
+        $json_parents = $json_children = array();
         foreach ($json_result['taxonomies'] as $taxonomy) {
             if (!isset($taxonomy['taxonomy'])) {
                 trigger_error('unexpected json format');
@@ -1119,61 +1170,99 @@ function datagov_repopulate_application_agencies()
             }
             if ('' == $taxonomy['Sub Agency']) {
 //                that's a parent
-                $tax_parents[] = $taxonomy;
+                $json_parents[] = $taxonomy;
                 continue;
             }
-//            that's a child
-            if (!isset($tax_children[$taxonomy['Federal Agency']])) {
-                $tax_children[$taxonomy['Federal Agency']] = array();
+
+            // Third-level agencies (grandchildren)
+            if ($taxonomy['term'] !== $taxonomy['unique id']) {
+                $parent = $taxonomy['Sub Agency'];
+                if (!isset($json_children[$parent])) {
+                    $json_children[$parent] = array();
+                }
+                $json_children[$parent][] = $taxonomy;
+                continue;
             }
-            $tax_children[$taxonomy['Federal Agency']][] = $taxonomy;
+
+//            that's a child
+            $parent = $taxonomy['Federal Agency'];
+            if (!isset($json_children[$parent])) {
+                $json_children[$parent] = array();
+            }
+            $json_children[$parent][] = $taxonomy;
         }
 
 //        let's put them to database finally
-        foreach ($tax_parents as $tax_parent) {
+        foreach ($json_parents as $json_parent) {
 //            parent first
-            $parent_term = get_term_by('slug', trim($tax_parent['unique id']), 'application_agencies');
-            if (!$parent_term) {
-                $parent_term = wp_insert_term(
-                    trim($tax_parent['Federal Agency']),
-                    'application_agencies',
-                    array(
-                        'slug' => trim($tax_parent['unique id'])
-                    )
-                );
-
-                if (is_wp_error($parent_term)) {
-                    trigger_error($parent_term->get_error_message());
-                }
-            }
+            $parent_term = update_application_agency($json_parent['unique id'], $json_parent['Federal Agency']);
 
 //            now children, if exist
-            if (isset($tax_children[$tax_parent['Federal Agency']])) {
-                $children = $tax_children[$tax_parent['Federal Agency']];
+            if (isset($json_children[$json_parent['Federal Agency']])) {
+                $children = $json_children[$json_parent['Federal Agency']];
                 foreach ($children as $child) {
-                    $existing_child = get_term_by('slug', trim($child['unique id']), 'application_agencies');
-                    if (!$existing_child) {
-                        $result = wp_insert_term(
-                            trim($child['Sub Agency']),
-                            'application_agencies',
-                            array(
-                                'slug' => trim($child['unique id']),
-                                'parent' => $parent_term['term_id']
-                            )
-                        );
-                        if (is_wp_error($result)) {
-                            trigger_error($result->get_error_message());
+                    $child_term = update_application_agency($child['unique id'], $child['Sub Agency'], $parent_term['term_id']);
+//                    grandchildren now
+                    if (isset($json_children[$child['Sub Agency']])) {
+                        $grandchildren = $json_children[$child['Sub Agency']];
+                        foreach ($grandchildren as $grandchild) {
+                            update_application_agency($grandchild['unique id'], $grandchild['term'], $child_term['term_id']);
                         }
                     }
                 }
-
             }
         }
     } catch (Exception $ex) {
-        return false;
+        trigger_error($ex->getMessage());
     }
 
     return true;
+}
+
+/**
+ * @param $slug
+ * @param $name
+ * @param int $parent_id
+ * @return array|WP_Error
+ */
+function update_application_agency($slug, $name, $parent_id = 0)
+{
+    $name = trim($name);
+    $slug = trim($slug);
+
+    $existing_term = get_term_by('slug', $slug, 'application_agencies');
+    if (is_wp_error($existing_term)) {
+        trigger_error($existing_term->get_error_message());
+    }
+
+    if ($existing_term) {
+        if ($name !== $existing_term->name || $parent_id !== $existing_term->parent) {
+            $args = array(
+                'name' => $name,
+                'parent' => $parent_id
+            );
+            $updated_term = wp_update_term($existing_term->term_id, 'application_agencies', $args);
+            if (is_wp_error($updated_term)) {
+                trigger_error($updated_term->get_error_message());
+            }
+            return $updated_term;
+        }
+        return array(
+            'term_id' => $existing_term->term_id
+        );
+    }
+    $result = wp_insert_term(
+        $name,
+        'application_agencies',
+        array(
+            'slug' => $slug,
+            'parent' => $parent_id
+        )
+    );
+    if (is_wp_error($result)) {
+        trigger_error($result->get_error_message());
+    }
+    return $result;
 }
 
 /**
@@ -1219,6 +1308,8 @@ add_filter(
     function ($url) {
         if (false === strpos($url, '.js')
             OR false !== strpos($url, '/jquery.min.js')
+            OR false !== strpos($url, '/jquery.colorbox.js')
+            OR false !== strpos($url, '/jquery.js')
             OR false !== strpos($url, 'advanced-custom-fields')
         ) { // not our file
             return $url;
@@ -1576,7 +1667,10 @@ add_filter('request', 'feed_request');
  */
 function feed_request($qv)
 {
-    $post_type = $_GET['post_type'];
+    $post_type = '';
+    if (isset($_GET['post_type'])){
+        $post_type = $_GET['post_type'];
+    }
     $rss_post_types = array('post', 'page');
     if (isset($qv['feed']) && isset($qv['post_type'])) {
         if (empty($post_type))
