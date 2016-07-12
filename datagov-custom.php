@@ -142,7 +142,6 @@ function cptui_register_my_cpt_impact()
             'rewrite' => array('slug' => 'impact', 'with_front' => true),
             'map_meta_cap' => true,
             'taxonomies' => array('category'),
-            'feeds'      => true, // bool (defaults to the 'has_archive' argument)
             'has_archive' => true,
             'supports' => array(
                 'title',
