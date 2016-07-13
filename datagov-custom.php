@@ -156,6 +156,10 @@ function cptui_register_my_cpt_impact()
 
 add_filter('wp_title', 'impact_wp_title', 20);
 
+/**
+ * @param $title
+ * @return mixed
+ */
 function impact_wp_title($title) {
     if (false !== strstr($title, 'Impact Archive')) {
         $title = str_replace('Impact Archive', 'Impact', $title);
@@ -163,7 +167,11 @@ function impact_wp_title($title) {
     return $title;
 }
 
-function remove_cssjs_ver( $src ) {
+/**
+ * @param $src
+ * @return string
+ */
+function remove_cssjs_ver($src ) {
     if( strpos( $src, '?ver=' ) )
         $src = remove_query_arg( 'ver', $src );
     return $src;
@@ -630,12 +638,21 @@ function datagov_custom_js()
 
 add_action('admin_init', 'datagov_custom_js');
 
+function custom_excerpt_length_20( $length ) {
+    return 15;
+}
+
+function excerpt_more_impact( $more ) {
+    return '...';
+}
+
 /**
  * @param $text
  *
+ * @param int $limit
  * @return mixed|void
  */
-function datagov_custom_keep_my_links($text)
+function datagov_custom_keep_my_links($text, $limit = 55)
 {
     $raw_excerpt = $text;
     if ('' == $text) {
@@ -644,7 +661,7 @@ function datagov_custom_keep_my_links($text)
         $text = apply_filters('the_content', $text);
         $text = str_replace(']]>', ']]>', $text);
         $text = strip_tags($text, '<a>');
-        $excerpt_length = apply_filters('excerpt_length', 55);
+        $excerpt_length = apply_filters('excerpt_length', $limit);
         $excerpt_more = apply_filters('excerpt_more', ' ' . '[...]');
         $words = preg_split(
             '/(<a.*?a>)|\n|\r|\t|\s/',
