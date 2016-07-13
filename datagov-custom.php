@@ -154,6 +154,15 @@ function cptui_register_my_cpt_impact()
     add_rewrite_rule('^impact/?$','?post_type=impact');
 }
 
+add_filter('wp_title', 'impact_wp_title', 20);
+
+function impact_wp_title($title) {
+    if (false !== strstr($title, 'Impact Archive')) {
+        $title = str_replace('Impact Archive', 'Impact', $title);
+    }
+    return $title;
+}
+
 function remove_cssjs_ver( $src ) {
     if( strpos( $src, '?ver=' ) )
         $src = remove_query_arg( 'ver', $src );
