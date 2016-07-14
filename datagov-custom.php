@@ -638,12 +638,8 @@ function datagov_custom_js()
 
 add_action('admin_init', 'datagov_custom_js');
 
-function custom_excerpt_length_20( $length ) {
-    return 15;
-}
-
 function excerpt_more_impact( $more ) {
-    return '...';
+    return '... <em><a>Read more</a></em>';
 }
 
 /**
