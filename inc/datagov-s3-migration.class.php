@@ -43,7 +43,7 @@ if (!class_exists('Datagov_S3_Migrator')) {
                         'region' => $region
                     );
                     $url = 'https://s3.amazonaws.com/'.$bucket.'/'.$s3_info['key'];
-                    echo $url;
+                    echo $url.' :: ';
                     $headers = @get_headers($url);
                     if(strpos($headers[0],'200')===false) {
                         echo 'FILE NOT FOUND';
