@@ -633,6 +633,10 @@ function datagov_custom_js()
 //        wp_deregister_script('jquery');
 //        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"), false, '2.2.4', false);
 //        wp_enqueue_script('jquery');
+
+        wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
+        wp_enqueue_script('clipboard');
+
     }
 }
 
