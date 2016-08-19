@@ -634,13 +634,23 @@ function datagov_custom_js()
 //        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"), false, '2.2.4', false);
 //        wp_enqueue_script('jquery');
 
-        wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
-        wp_enqueue_script('clipboard');
-
+//        wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
+//        wp_enqueue_script('clipboard');
     }
 }
 
 add_action('admin_init', 'datagov_custom_js');
+
+/**
+ * Include clipboard js
+ */
+function datagov_clipboard_js()
+{
+    wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
+    wp_enqueue_script('clipboard');
+}
+
+add_action('wp_enqueue_scripts', 'datagov_clipboard_js');
 
 function excerpt_more_impact( $more ) {
     return '... <em><a>Read more</a></em>';
