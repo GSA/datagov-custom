@@ -644,13 +644,13 @@ add_action('admin_init', 'datagov_custom_js');
 /**
  * Include clipboard js
  */
-function datagov_clipboard_js()
-{
-    wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
-    wp_enqueue_script('clipboard');
-}
-
-add_action('wp_enqueue_scripts', 'datagov_clipboard_js');
+//function datagov_clipboard_js()
+//{
+//    wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
+//    wp_enqueue_script('clipboard');
+//}
+//
+//add_action('wp_enqueue_scripts', 'datagov_clipboard_js');
 
 function excerpt_more_impact( $more ) {
     return '... <em><a>Read more</a></em>';
@@ -1414,7 +1414,7 @@ function datagov_custom_add_category($post_id)
     if (wp_is_post_revision($post_id)) {
         return;
     }
-    // ignore wp_insert_post action that is called after 
+    // ignore wp_insert_post action that is called after
     // user clicks Add New Page
     if (empty($_POST)) {
         return;
@@ -1626,7 +1626,7 @@ function datagov_custom_purge_akamai_cache($post_id)
     }
 
     $post_permalink = get_permalink($post_id);
-    #$post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink); 
+    #$post_permalink      = str_replace('datagov', 'staging.data.gov', $post_permalink);
     $objects = array($post_permalink);
     $username = get_option('akamai_username');
     $password = get_option('akamai_password');
