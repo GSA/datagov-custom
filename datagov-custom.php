@@ -1058,11 +1058,19 @@ function ckan_environment_conf()
     <?php
 }
 
-add_action('admin_init', 'filter_rss_voting', 100);
+//add_action('admin_init', 'filter_rss_voting', 100);
 /**
  * DG-1901
  * Individual Rss feeds Posts have an option of voting, which is to be removed or hidden.
  */
+
+
+if (!wp_next_scheduled('filter_rss_voting_hourly')) {
+    wp_schedule_event(time(), 'hourly', 'filter_rss_voting_hourly');
+}
+
+add_action('filter_rss_voting_hourly', 'filter_rss_voting');
+
 function filter_rss_voting()
 {
     /**
@@ -1088,11 +1096,10 @@ add_filter('https_ssl_verify', '__return_false');
 /**
  * DG-1955
  * Daily update CKAN dataset total count, to display it over search box on main page
- * @author Alex Perfilov
  */
-//if (!wp_next_scheduled('ckan_count_cron_daily')) {
-//    wp_schedule_event(time(), 'daily', 'ckan_count_cron_daily');
-//}
+if (!wp_next_scheduled('ckan_count_cron_daily')) {
+    wp_schedule_event(time(), 'daily', 'ckan_count_cron_daily');
+}
 
 add_action('ckan_count_cron_daily', 'ckan_count_cron');
 
