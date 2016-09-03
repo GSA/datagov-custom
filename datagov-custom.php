@@ -630,9 +630,9 @@ function datagov_custom_js()
         wp_register_script('datagov_custom_misc_js', plugins_url('/datagov-custom-misc.js', __FILE__), array('jquery'));
         wp_enqueue_script('datagov_custom_misc_js');
 
-//        wp_deregister_script('jquery');
-//        wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"), false, '2.2.4', false);
-//        wp_enqueue_script('jquery');
+        wp_deregister_script('jquery');
+        wp_register_script('jquery', "https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js", false, '3.1.0', true);
+        wp_enqueue_script('jquery');
 
 //        wp_register_script('clipboard', ("https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"), false, '1.5.12', false);
 //        wp_enqueue_script('clipboard');
@@ -1673,7 +1673,9 @@ function datagov_custom_purge_akamai_cache($post_id)
         }
     }
 
-    $_SESSION['purge_status'] = $purge_status;
+    if(isset($_SESSION)) {
+        $_SESSION['purge_status'] = $purge_status;
+    }
 }
 
 /**
@@ -1681,11 +1683,13 @@ function datagov_custom_purge_akamai_cache($post_id)
  */
 function akamai_purge_message($messages)
 {
-    $purge_status = $_SESSION['purge_status'];
-    $messages['page'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['page'][1]);
-    $messages['post'][1] = str_replace('Post updated.', 'Post updated. ' . $purge_status, $messages['post'][1]);
+    if (isset($_SESSION) && isset($_SESSION['purge_status'])) {
+        $purge_status = $_SESSION['purge_status'];
+        $messages['page'][1] = str_replace('Page updated.', 'Page updated. ' . $purge_status, $messages['page'][1]);
+        $messages['post'][1] = str_replace('Post updated.', 'Post updated. ' . $purge_status, $messages['post'][1]);
 
-    unset($_SESSION['purge_status']);
+        unset($_SESSION['purge_status']);
+    }
 
     return $messages;
 }
