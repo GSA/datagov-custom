@@ -1353,7 +1353,7 @@ add_filter(
             OR false !== strpos($url, '/jquery.colorbox.js')
             OR false !== strpos($url, '/jquery.js')
             OR false !== strpos($url, 'advanced-custom-fields')
-            OR false !== strpos($url, '/wp-includes/js/')
+            OR false == strpos($url, '/plugins/')
         ) { // not our file
             return $url;
         }
