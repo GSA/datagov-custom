@@ -1348,13 +1348,14 @@ add_filter(
      * @return string
      */
     function ($url) {
-        if (false === strpos($url, '.js')
-            OR false !== strpos($url, '/jquery.min.js')
-            OR false !== strpos($url, '/jquery.colorbox.js')
-            OR false !== strpos($url, '/jquery.js')
-            OR false !== strpos($url, 'advanced-custom-fields')
-            OR false == strpos($url, '/plugins/')
-        ) { // not our file
+        if (
+            false === strpos($url, '.js')                   // not js
+            OR false !== strpos($url, '/jquery.min.js')     // jquery must be loaded first
+            OR (
+                false == strpos($url, '/plugins/')          // core and non-theme js must
+                AND false === strpos($url, '/app/themes/')) // be loaded first
+        ) {
+            // no defer
             return $url;
         }
 
