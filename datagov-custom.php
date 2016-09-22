@@ -139,7 +139,7 @@ function cptui_register_my_cpt_impact()
             'label' => 'Impact',
             'public' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
-            'rewrite' => array('slug' => 'impact', 'with_front' => true),
+            'rewrite' => array('slug' => 'story', 'with_front' => true),
             'map_meta_cap' => true,
             'taxonomies' => array('category'),
             'has_archive' => true,
