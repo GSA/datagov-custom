@@ -151,7 +151,7 @@ function cptui_register_my_cpt_impact()
         )
     );
 
-    add_rewrite_rule('^impact/?$','?post_type=impact');
+    add_rewrite_rule('^story/?$','?post_type=impact');
 }
 
 add_filter('wp_title', 'impact_wp_title', 20);
