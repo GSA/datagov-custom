@@ -136,7 +136,7 @@ function cptui_register_my_cpt_impact()
     register_post_type(
         'impact',
         array(
-            'label' => 'Impact',
+            'label' => 'Story',
             'public' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
             'rewrite' => array('slug' => 'story', 'with_front' => true),
