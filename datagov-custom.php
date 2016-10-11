@@ -1351,6 +1351,7 @@ add_filter(
         if (
             false === strpos($url, '.js')                   // not js
             OR false !== strpos($url, '/jquery.min.js')     // jquery must be loaded first
+            OR false !== strpos($url, 'advanced-custom-fields')     // advanced-custom-fields is creating problems
             OR (
                 false == strpos($url, '/plugins/')          // core and non-theme js must
                 AND false === strpos($url, '/app/themes/')) // be loaded first
