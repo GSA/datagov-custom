@@ -1332,21 +1332,6 @@ add_filter(
  * @return string
  */
     'clean_url',
-    /**
-     * @param $url
-     *
-     * @return string
-     */
-    /**
-     * @param $url
-     *
-     * @return string
-     */
-    /**
-     * @param $url
-     *
-     * @return string
-     */
     function ($url) {
         if (
             false === strpos($url, '.js')                   // not js
