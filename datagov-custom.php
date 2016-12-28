@@ -1813,3 +1813,20 @@ function datagov_mail_from($old)
     }
     return $old;
 }
+
+/**
+ * Fix http to https if found
+ */
+add_filter( 'site_url', array( $this, 'datagov_fix_url' ), 10, 2 );
+
+/**
+ * @param $url
+ * @return mixed
+ */
+function datagov_fix_url($url)
+{
+    if (defined('WP_CONTENT_PROTOCOL') && ('https' == WP_CONTENT_PROTOCOL)) {
+        $url = str_replace('http://', 'https://', $url);
+    }
+    return $url;
+}
