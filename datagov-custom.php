@@ -151,7 +151,7 @@ function cptui_register_my_cpt_impact()
         )
     );
 
-    add_rewrite_rule('^story/?$','?post_type=impact');
+    add_rewrite_rule('^story/?$', '?post_type=impact');
 }
 
 add_filter('wp_title', 'impact_wp_title', 20);
@@ -160,7 +160,8 @@ add_filter('wp_title', 'impact_wp_title', 20);
  * @param $title
  * @return mixed
  */
-function impact_wp_title($title) {
+function impact_wp_title($title)
+{
     if (false !== strstr($title, 'Impact Archive')) {
         $title = str_replace('Impact Archive', 'Impact', $title);
     }
@@ -171,15 +172,16 @@ function impact_wp_title($title) {
  * @param $src
  * @return string
  */
-function remove_cssjs_ver($src ) {
-    if( strpos( $src, '?ver=' ) )
-        $src = remove_query_arg( 'ver', $src );
+function remove_cssjs_ver($src)
+{
+    if (strpos($src, '?ver='))
+        $src = remove_query_arg('ver', $src);
     return $src;
 }
 
-if (is_admin()){
-    add_filter( 'style_loader_src', 'remove_cssjs_ver', 9999 );
-    add_filter( 'script_loader_src', 'remove_cssjs_ver', 9999 );
+if (is_admin()) {
+    add_filter('style_loader_src', 'remove_cssjs_ver', 9999);
+    add_filter('script_loader_src', 'remove_cssjs_ver', 9999);
 }
 
 #Events
@@ -652,7 +654,12 @@ add_action('admin_init', 'datagov_custom_js');
 //
 //add_action('wp_enqueue_scripts', 'datagov_clipboard_js');
 
-function excerpt_more_impact( $more ) {
+/**
+ * @param $more
+ * @return string
+ */
+function excerpt_more_impact($more)
+{
     return '... <em><a>Read more</a></em>';
 }
 
@@ -1071,6 +1078,9 @@ if (!wp_next_scheduled('filter_rss_voting_hourly')) {
 
 add_action('filter_rss_voting_hourly', 'filter_rss_voting');
 
+/**
+ *
+ */
 function filter_rss_voting()
 {
     /**
@@ -1661,7 +1671,7 @@ function datagov_custom_purge_akamai_cache($post_id)
         }
     }
 
-    if(isset($_SESSION)) {
+    if (isset($_SESSION)) {
         $_SESSION['purge_status'] = $purge_status;
     }
 }
@@ -1702,7 +1712,7 @@ add_filter('request', 'feed_request');
 function feed_request($qv)
 {
     $post_type = '';
-    if (isset($_GET['post_type'])){
+    if (isset($_GET['post_type'])) {
         $post_type = $_GET['post_type'];
     }
     $rss_post_types = array('post', 'page');
@@ -1786,3 +1796,20 @@ add_filter(/**
 
     return str_replace(' src', ' id="_fed_an_ua_tag" src', $tag);
 }, 10, 2);
+
+
+/** Fixing empty WordPress email settings */
+
+add_filter('wp_mail_from', 'datagov_mail_from');
+
+/**
+ * @param $old
+ * @return mixed
+ */
+function datagov_mail_from($old)
+{
+    if (!is_email($old) && defined('WP_DEFAULT_EMAIL_FROM') && is_email(WP_DEFAULT_EMAIL_FROM)) {
+        return WP_DEFAULT_EMAIL_FROM;
+    }
+    return $old;
+}

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: alexandr.perfilov
- * Date: 12/18/14
- * Time: 3:20 PM
- */
 
 include_once(dirname(dirname(dirname(dirname(__FILE__)))).'/wp-config.php');
-//include_once(dirname(__FILE__).'/datagov-custom.php');
 
 class Test extends PHPUnit_Framework_TestCase {
 
