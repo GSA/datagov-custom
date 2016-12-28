@@ -1820,6 +1820,7 @@ function datagov_mail_from($old)
 add_filter( 'site_url', 'datagov_fix_url' );
 
 /**
+ * Double-fix url to https:// if some weird things are going on
  * @param $url
  * @return mixed
  */
@@ -1830,3 +1831,10 @@ function datagov_fix_url($url)
     }
     return $url;
 }
+
+/**
+ * Very important!
+ * DO NOT REMOVE
+ * It disables infinite redirect to https://
+ */
+remove_filter('template_redirect', 'redirect_canonical');
