@@ -1817,7 +1817,7 @@ function datagov_mail_from($old)
 /**
  * Fix http to https if found
  */
-add_filter( 'site_url', array( $this, 'datagov_fix_url' ), 10, 2 );
+add_filter( 'site_url', 'datagov_fix_url' );
 
 /**
  * @param $url
