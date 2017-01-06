@@ -16,6 +16,13 @@ defined('ABSPATH') or die('No script kiddies please!');
 # define( 'DCPT_VERSION', '0.8.1' );
 
 
+//Redirect to data.gov/labs if website is being opened through labs.data.gov domain
+if (isset($_SERVER['HTTP_HOST']) && 'labs.data.gov' == $_SERVER['HTTP_HOST']) {
+    header('Location: https://www.data.gov/labs');
+    die('Redirecting...');
+}
+
+
 $purge_status = "";
 
 // Custom Post Types
@@ -1817,7 +1824,7 @@ function datagov_mail_from($old)
 /**
  * Fix http to https if found
  */
-add_filter( 'site_url', 'datagov_fix_url' );
+add_filter('site_url', 'datagov_fix_url');
 
 /**
  * Double-fix url to https:// if some weird things are going on
