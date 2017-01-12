@@ -24,8 +24,9 @@ if (isset($_SERVER['HTTP_HOST']) && 'labs.data.gov' == $_SERVER['HTTP_HOST']) {
 
 // Redirect data.gov to www.data.gov
 if (isset($_SERVER['HTTP_HOST']) && 'data.gov' == $_SERVER['HTTP_HOST']) {
-    header('Location: https://www.data.gov/' . isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-    die('Redirecting...');
+    header('Location: https://www.data.gov/' . ltrim($_SERVER['REQUEST_URI'],'/'));
+    echo 'Redirecting...';
+    exit();
 }
 
 $purge_status = "";
