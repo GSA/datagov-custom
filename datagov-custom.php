@@ -16,12 +16,17 @@ defined('ABSPATH') or die('No script kiddies please!');
 # define( 'DCPT_VERSION', '0.8.1' );
 
 
-//Redirect to data.gov/labs if website is being opened through labs.data.gov domain
+// Redirect to data.gov/labs if website is being opened through labs.data.gov domain
 if (isset($_SERVER['HTTP_HOST']) && 'labs.data.gov' == $_SERVER['HTTP_HOST']) {
     header('Location: https://www.data.gov/labs');
     die('Redirecting...');
 }
 
+// Redirect data.gov to www.data.gov
+if (isset($_SERVER['HTTP_HOST']) && 'data.gov' == $_SERVER['HTTP_HOST']) {
+    header('Location: https://www.data.gov/' . isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+    die('Redirecting...');
+}
 
 $purge_status = "";
 
