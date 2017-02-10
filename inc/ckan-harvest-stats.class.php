@@ -14,7 +14,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
     /**
      * Class CKAN_Harvest_Stats
      */
-    
+
     class CKAN_Harvest_Stats
     {
         /**
@@ -25,7 +25,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
         /**
          *
          */
-        
+
         const DEFAULT_FED_JSON_URL = 'http://data.gov/app/themes/roots-nextdatagov/assets/Json/fed_agency.json';
 
         /**
@@ -111,7 +111,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
                     continue;
                 }
 
-                if (!isset($organizations[$organization['name']])) {
+                if ($organization['name'] && !isset($organizations[$organization['name']])) {
                     $organizations[$organization['name']] = $organization['title'];
                     if (!$this->saveOrganization($organization)) {
                         throw new Exception(
