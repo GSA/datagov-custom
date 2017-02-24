@@ -24,7 +24,7 @@ if (isset($_SERVER['HTTP_HOST']) && 'labs.data.gov' == $_SERVER['HTTP_HOST']) {
 
 // Redirect data.gov to www.data.gov
 if (isset($_SERVER['HTTP_HOST']) && 'data.gov' == $_SERVER['HTTP_HOST']) {
-    header('Location: https://www.data.gov/' . ltrim($_SERVER['REQUEST_URI'],'/'));
+    header('Location: https://www.data.gov/' . ltrim($_SERVER['REQUEST_URI'], '/'));
     echo 'Redirecting...';
     exit();
 }
@@ -155,12 +155,7 @@ function cptui_register_my_cpt_impact()
             'rewrite' => array('slug' => 'story', 'with_front' => true),
             'map_meta_cap' => true,
             'taxonomies' => array('category'),
-            'has_archive' => true,
-            'supports' => array(
-                'title',
-                'editor',
-                'revisions'
-            )
+            'has_archive' => true
         )
     );
 
@@ -1358,9 +1353,9 @@ add_filter(
     function ($url) {
         if (
             false === strpos($url, '.js')                   // not js
-            OR false !== strpos($url, '/jquery.min.js')     // jquery must be loaded first
-            OR false !== strpos($url, 'advanced-custom-fields')     // advanced-custom-fields is creating problems
-            OR (
+            || false !== strpos($url, '/jquery.min.js')     // jquery must be loaded first
+            || false !== strpos($url, 'advanced-custom-fields')     // advanced-custom-fields is creating problems
+            || (
                 false == strpos($url, '/plugins/')          // core and non-theme js must
                 AND false === strpos($url, '/app/themes/')) // be loaded first
         ) {
@@ -1414,7 +1409,7 @@ add_action('save_post', 'datagov_custom_add_category', 20);
  * for pages for which you don't explicitly set a permalink value.
  * In short, it auto populates the permalink field if left empty.
  *
- * @param int post_id
+ * @param int $post_id
  *   The id of the page
  *
  */
@@ -1470,7 +1465,7 @@ function datagov_custom_add_category($post_id)
  * This function checks if a new pages is being added
  * based on referer
  *
- * @param string referer
+ * @param string $referer
  *
  * @return bool
  *   true if its a new page otherwise false
@@ -1747,7 +1742,6 @@ function exclude_status_from_feeds(&$wp_query)
     if ($wp_query->is_feed()) {
         $format = $_GET['format'];
         $wp_query->set('orderby', 'modified');
-        $post_format_array = array('');
         if (!empty($format)) {
             if ($format == "standard") {
                 $post_formats_to_exclude = array('post-format-status', 'post-format-link', 'post-format-image', 'post-format-gallery');
