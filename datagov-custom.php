@@ -774,7 +774,6 @@ function add_featured_custom_taxonomy()
 }
 
 add_action('admin_menu', 'add_featured_custom_taxonomy');
-
 /**
  * Custom callback that generates category terms for featured taxonomy.
  * It excludes the "Topic Introduction" term from the list.
