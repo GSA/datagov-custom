@@ -118,7 +118,7 @@ if (!class_exists('CKAN_Harvest_Stats')) {
                     continue;
                 }
 
-//                error_log(self::CKAN_PACKAGE_DETAILS . $harvest_result['name'].' ');
+                error_log(self::CKAN_PACKAGE_DETAILS . $harvest_result['name'].' ');
 
 //                Get full harvest info
                 $json = wp_remote_get(self::CKAN_PACKAGE_DETAILS . $harvest_result['name']);
@@ -327,20 +327,21 @@ if (!class_exists('CKAN_Harvest_Stats')) {
              */
             global $wpdb;
 
-            if (!isset($jsonHarvestInfo['extras'])) {
-                return false;
-            }
+//            if (!isset($jsonHarvestInfo['extras'])) {
+//                error_log('no extras');
+//                return false;
+//            }
 
-            $extras = $jsonHarvestInfo['extras'];
-            $isDataJson = false;
-            foreach ($extras as $extra) {
-                if ('source_type' == $extra['key'] && 'datajson' == $extra['value']) {
-                    $isDataJson = true;
-                }
-            }
-            if (!$isDataJson) {
-                return false;
-            }
+//            $extras = $jsonHarvestInfo['extras'];
+//            $isDataJson = false;
+//            foreach ($extras as $extra) {
+//                if ('source_type' == $extra['key'] && 'datajson' == $extra['value']) {
+//                    $isDataJson = true;
+//                }
+//            }
+//            if (!$isDataJson) {
+//                return false;
+//            }
 
             $localLastJob = array(
                 'status' => 'Unknown',
@@ -426,27 +427,27 @@ if (!class_exists('CKAN_Harvest_Stats')) {
             /**
              * Filling meta data
              */
-            if ($added) {
-                foreach ($extras as $extra) {
-                    $wpdb->replace(
-                        self::CKAN_HARVEST_META_TABLE,
-                        array(
-                            'harvest_id' => $jsonHarvestInfo['id'],
-                            'key' => $extra['key'],
-                            'value' => $extra['value'],
-                        ),
-                        array(
-                            '%s', //  1fc919e5-e870-4d57-91b8-78e14081ce52
-                            '%s', //  frequency
-                            '%s', //  WEEKLY
-                        )
-                    );
-                }
-            } else {
-                return false;
-            }
+//            if ($added) {
+//                foreach ($extras as $extra) {
+//                    $wpdb->replace(
+//                        self::CKAN_HARVEST_META_TABLE,
+//                        array(
+//                            'harvest_id' => $jsonHarvestInfo['id'],
+//                            'key' => $extra['key'],
+//                            'value' => $extra['value'],
+//                        ),
+//                        array(
+//                            '%s', //  1fc919e5-e870-4d57-91b8-78e14081ce52
+//                            '%s', //  frequency
+//                            '%s', //  WEEKLY
+//                        )
+//                    );
+//                }
+//            } else {
+//                return false;
+//            }
 
-            return true;
+            return (bool)$added;
         }
 
         /**
