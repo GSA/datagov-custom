@@ -10,7 +10,7 @@ Author URI: https://github.com/GSA
 */
 
 // Safety first
-defined('ABSPATH') or die('No script kiddies please!');
+defined('ABSPATH') || die('No script kiddies please!');
 
 // Define current version constant
 # define( 'DCPT_VERSION', '0.8.1' );
@@ -1356,7 +1356,7 @@ add_filter(
             || false !== strpos($url, 'advanced-custom-fields')     // advanced-custom-fields is creating problems
             || (
                 false == strpos($url, '/plugins/')          // core and non-theme js must
-                AND false === strpos($url, '/app/themes/')) // be loaded first
+                && false === strpos($url, '/app/themes/')) // be loaded first
         ) {
             // no defer
             return $url;
