@@ -31,6 +31,8 @@ if (current_user_can('manage_options')) {
         'https://uat-datagov.reisys.com/app/uploads/' => $s3_path,
         'http://qa-datagov.reisys.com/app/uploads/' => $s3_path,
         '"aapp/uploads/' => '"'.$s3_path,
+        'http://www.data.gov/app/uploads/media/' => $s3_path,
+        'https://www.data.gov/app/uploads/media/' => $s3_path,
     );
 
 
