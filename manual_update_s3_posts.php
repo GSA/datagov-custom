@@ -33,6 +33,9 @@ if (current_user_can('manage_options')) {
         '"aapp/uploads/' => '"'.$s3_path,
         'http://www.data.gov/app/uploads/media/' => $s3_path,
         'https://www.data.gov/app/uploads/media/' => $s3_path,
+        'https://www.data.gov/media/' => $s3_path,
+        'http://www.data.gov/media/' => $s3_path,
+        '"/media/' => '"'.$s3_path,
     );
 
 
