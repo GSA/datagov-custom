@@ -1844,3 +1844,20 @@ function datagov_fix_url($url)
  * It disables infinite redirect to https://
  */
 remove_filter('template_redirect', 'redirect_canonical');
+
+
+/**
+ * NO XSS
+ */
+add_filter('paginate_links', 'datagov_paginate_links', 30);
+
+/**
+ * NO XSS
+ *
+ * @param $link
+ * @return string
+ */
+function datagov_paginate_links($link)
+{
+    return htmlentities(str_replace(array('"', "'"), '', html_entity_decode($link, ENT_QUOTES)));
+}
