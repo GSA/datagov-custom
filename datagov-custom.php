@@ -152,15 +152,24 @@ function cptui_register_my_cpt_impact()
             'label' => 'Story',
             'public' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
-            'rewrite' => array('slug' => 'story', 'with_front' => true),
+            'rewrite' => array('slug' => 'stories', 'with_front' => true),
             'map_meta_cap' => true,
             'taxonomies' => array('category'),
             'has_archive' => true
         )
     );
 
-    add_rewrite_rule('^story/?$', '?post_type=impact');
+    add_rewrite_rule('^stories/?$', '?post_type=impact');
 }
+
+function stories_rewrite_flush() {
+    cptui_register_my_cpt_impact();
+
+    // ATTENTION: This is *only* done during plugin activation hook in this example!
+    // You should *NEVER EVER* do this on every page load!!
+    flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'stories_rewrite_flush' );
 
 add_filter('wp_title', 'impact_wp_title', 20);
 
@@ -1860,4 +1869,65 @@ add_filter('paginate_links', 'datagov_paginate_links', 30);
 function datagov_paginate_links($link)
 {
     return htmlentities(str_replace(array('"', "'"), '', html_entity_decode($link, ENT_QUOTES)));
+}
+
+add_action('admin_init', 'db_safety');
+
+/**
+ * Clean up prod db to dev/uat/qa/staging
+ */
+function db_safety()
+{
+    // if you add more rules here, increment $safety_level++
+    $safety_level = 1;
+    $safe_email = 'data.gov.dev@reisystems.com';
+
+    if (!defined('REAL_ENV')) {
+        return;
+    }
+    if ('production' == REAL_ENV) {
+        return;
+    }
+    if (get_option('db_safety_level') == $safety_level) {
+        return;
+    }
+
+    global $wpdb;
+
+    $wpdb->query("UPDATE `wp_customcontactforms_forms` SET `form_email`='{$safe_email}' WHERE 1");
+    $wpdb->query("UPDATE `wp_postmeta` SET `meta_value` = REPLACE(`meta_value`,'@data.gov','@localhost') WHERE `meta_key`='_additional_settings';");
+
+    $wpcf7_contact_form_metas_mail = $wpdb->get_results("
+        SELECT * FROM `wp_postmeta`
+          WHERE `post_id` IN (SELECT `ID` FROM `wp_posts` WHERE `post_type` = 'wpcf7_contact_form')
+            AND `meta_key` = '_mail'
+    ");
+    foreach ($wpcf7_contact_form_metas_mail as $row) {
+        $meta_value = unserialize($row->meta_value);
+        if (false === $meta_value) {
+            continue;
+        }
+        if (isset($meta_value['sender'])) {
+            $meta_value['sender'] = str_replace('@data.gov', '@localhost', $meta_value['sender']);
+        }
+        if (isset($meta_value['recipient'])) {
+            $meta_value['recipient'] = $safe_email;
+        }
+        $wpdb->update(
+            'wp_postmeta',
+            array(
+                'meta_value' => serialize($meta_value)
+            ),
+            array(
+                'meta_id' => $row->meta_id
+            ),
+            array(
+                '%s'    // $meta_value
+            ),
+            array('%d')   // meta_id
+        );
+
+    }
+
+    update_option('db_safety_level', $safety_level);
 }
