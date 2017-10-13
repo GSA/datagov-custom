@@ -149,7 +149,7 @@ function cptui_register_my_cpt_impact()
     register_post_type(
         'impact',
         array(
-            'label' => 'Story',
+            'label' => 'Data Stories',
             'public' => true,
             'supports' => array('title', 'editor', 'comments', 'revisions', 'author'),
             'rewrite' => array('slug' => 'stories', 'with_front' => true),
